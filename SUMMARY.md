@@ -2,7 +2,24 @@
 
 * [Welcome to SSP Wallet](README.md)
 
-## Getting Started with SSP Wallet
+## 🏗️ SSP Ecosystem Architecture
+
+* [Introduction to 2-of-2 Multisignature](architecture/multisig-introduction.md)
+* [How SSP Components Work Together](architecture/ecosystem-overview.md)
+* [WalletConnect v2 Integration](architecture/walletconnect-integration.md)
+* [Account Abstraction Implementation](architecture/account-abstraction.md)
+
+## 🔒 Security & Best Practices
+
+* [Security Overview](security/security-overview.md)
+* [Device Security Guidelines](security/device-security.md)
+* [Halborn Security Audit 2025](security/halborn-audit-2025.md)
+
+## 🚀 Quick Start Guides
+
+* [First-Time Setup Guide](quick-start/first-time-setup.md)
+
+## 💼 Getting Started with SSP Wallet
 
 * [Change Language](getting-started-with-ssp-wallet/quickstart.md)
 * [Switch Chain](getting-started-with-ssp-wallet/switch-chain.md)
@@ -32,7 +49,7 @@
   * [Delete Contact](getting-started-with-ssp-wallet/contacts/delete-contact.md)
 * [Logout Your SSP Wallet](getting-started-with-ssp-wallet/logout-your-ssp-wallet.md)
 
-## GETTING STARTED WITH SSP KEY
+## 📱 Getting Started with SSP Key
 
 * [Install SSP Key](getting-started-with-ssp-key/install-ssp-key.md)
 * [Create a New Key and Syncing to SSP Wallet](getting-started-with-ssp-key/create-a-new-key-and-syncing-to-ssp-wallet.md)
@@ -40,12 +57,34 @@
 * [Retrieving Your SSP Key Seed Phrase](getting-started-with-ssp-key/retrieving-your-ssp-key-seed-phrase.md)
 * [Using Your SSP Key For Syncing](getting-started-with-ssp-key/using-your-ssp-key-for-syncing.md)
 
-## GETTING STARTED WITH SSP RELAY DEVELOPMENT
+## ⚡ Advanced Features
+
+* [Account Abstraction Explained](advanced-features/account-abstraction.md)
+
+## 🔗 Blockchain Deep Dives
+
+* [Supported Blockchains Overview](blockchains/supported-blockchains.md)
+* [Networks Under Evaluation](blockchains/networks-under-evaluation.md)
+
+## 🏢 Professional & Enterprise Usage
+
+* [Enterprise Deployment Guide](enterprise/deployment-guide.md)
+
+## 🛠️ Developer Integration Hub
+
+* [Getting Started for Developers](developers/getting-started.md)
+* [API Reference](developers/api-reference.md)
+
+## 🔧 Troubleshooting & Support
+
+* [Common Issues & Solutions](troubleshooting/common-issues.md)
+
+## 🛡️ SSP Relay Development
 
 * [Overview](getting-started-with-ssp-relay-development/overview.md)
 * [Environment Requirements](getting-started-with-ssp-relay-development/environment-requirements.md)
 * [Project Installation](getting-started-with-ssp-relay-development/project-installation.md)
-* [Project Structure 0verview](getting-started-with-ssp-relay-development/project-structure-0verview.md)
+* [Project Structure Overview](getting-started-with-ssp-relay-development/project-structure-0verview.md)
 * [Project Folders](getting-started-with-ssp-relay-development/project-folders/README.md)
   * [Config](getting-started-with-ssp-relay-development/project-folders/config.md)
   * [Helpers](getting-started-with-ssp-relay-development/project-folders/helpers.md)
@@ -56,12 +95,12 @@
     * [services](getting-started-with-ssp-relay-development/project-folders/src/services.md)
     * [routes.ts](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/README.md)
       * [GET /v1/sync](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/get-v1-sync.md)
-      * [GET  /v1/action](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/get-v1-action.md)
+      * [GET /v1/action](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/get-v1-action.md)
       * [POST /v1/sync](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/post-v1-sync.md)
       * [POST /v1/token](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/post-v1-token.md)
       * [POST /v1/action](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/post-v1-action.md)
-      * [GET  /v1/rates](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/get-v1-rates.md)
-      * [GET  /v1/networkfees](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/get-v1-networkfees.md)
+      * [GET /v1/rates](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/get-v1-rates.md)
+      * [GET /v1/networkfees](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/get-v1-networkfees.md)
       * [POST /v1/ticket](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/post-v1-ticket.md)
       * [GET /v1/tokeninfo](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/get-v1-tokeninfo.md)
       * [GET /v1/services](getting-started-with-ssp-relay-development/project-folders/src/routes.ts/get-v1-services.md)
@@ -69,7 +108,7 @@
   * [Tests](getting-started-with-ssp-relay-development/project-folders/tests/README.md)
     * [unit](getting-started-with-ssp-relay-development/project-folders/tests/unit.md)
 
-## GETTING STARTED WITH SSP WALLET DEVELOPMENT
+## 💻 SSP Wallet Development
 
 * [Overview](getting-started-with-ssp-wallet-development/overview.md)
 * [Environment Requirements](getting-started-with-ssp-wallet-development/environment-requirements.md)
@@ -93,7 +132,7 @@
   * [Tests](getting-started-with-ssp-wallet-development/project-folders/tests/README.md)
     * [lib](getting-started-with-ssp-wallet-development/project-folders/tests/lib.md)
 
-## GETTING STARTED WITH SSP KEY DEVELOPMENT
+## 📲 SSP Key Development
 
 * [Overview](getting-started-with-ssp-key-development/overview.md)
 * [Environment Requirements](getting-started-with-ssp-key-development/environment-requirements/README.md)

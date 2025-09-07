@@ -18,6 +18,7 @@ Visit us at:
 #### Download SSP Wallet:
 
 * **Google Chrome Extension:** [SSP Wallet on Chrome Web Store](https://chromewebstore.google.com/u/3/detail/ssp-wallet/mgfbabcnedcejkfibpafadgkhmkifhbd)
+* **Mozilla Firefox Extension:** [SSP Wallet on Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/ssp-wallet)
 
 #### Download SSP Key:
 
@@ -108,6 +109,53 @@ This design ensures that **both devices are required** to authorize any transact
 
 ***
 
+### WalletConnect Integration
+
+SSP Wallet supports **WalletConnect v2** (now **Reown**), enabling seamless integration with thousands of decentralized applications (dApps) on EVM-compatible networks.
+
+#### Key Features:
+* **EVM dApp Compatibility:** Connect to any WalletConnect-enabled dApp on Ethereum, Polygon, BSC, Avalanche, and Base
+* **DeFi & NFT Support:** Full integration with DeFi protocols, NFT marketplaces, and trading platforms
+* **Account Abstraction Support:** Native ERC-4337 Account Abstraction on supported EVM chains
+* **EIP-712 Message Signing:** Full support for typed structured data signing standard used by modern dApps
+* **Secure Transaction Signing:** All transactions still require both SSP Wallet and SSP Key for authorization
+* **Real-Time Communication:** Instant connection and transaction requests through secure WebSocket connections
+
+**Note:** WalletConnect is available only for EVM-compatible networks (Ethereum, Polygon, BSC, Avalanche, Base). UTXO networks (Bitcoin, Litecoin, etc.) use native wallet functionality.
+
+***
+
+### Supported Blockchains
+
+SSP Wallet supports **15 blockchain networks** with native multisignature security:
+
+#### UTXO Networks (Native Multisignature)
+- **Bitcoin (BTC)** - P2WSH native segwit multisignature
+- **Bitcoin Testnet** - P2WSH testing network
+- **Bitcoin Signet** - P2WSH controlled test network
+- **Litecoin (LTC)** - P2WSH native segwit multisignature
+- **Dogecoin (DOGE)** - P2SH multisignature
+- **Bitcoin Cash (BCH)** - P2SH multisignature
+- **Ravencoin (RVN)** - P2SH multisignature with asset support
+- **Zcash (ZEC)** - P2SH multisignature (transparent addresses)
+- **Flux (FLUX)** - P2SH multisignature with cloud integration
+- **Flux Testnet** - P2SH testing network
+
+#### EVM Networks (Account Abstraction + WalletConnect)
+- **Ethereum (ETH)** - Full DeFi ecosystem, ERC-4337 support
+- **Polygon (POL)** - Low-cost transactions, gaming dApps
+- **Binance Smart Chain (BNB)** - High throughput, diverse DeFi
+- **Avalanche (AVAX)** - Fast finality, growing ecosystem  
+- **Base (ETH on Base)** - Coinbase Layer 2, consumer apps
+
+#### Testnet Networks
+- **Sepolia** - Ethereum testnet
+- **Amoy** - Polygon testnet
+
+Each network maintains SSP's **2-of-2 multisignature security** while leveraging blockchain-specific optimizations and features.
+
+***
+
 ### Open Source Transparency
 
 SSP Wallet is fully open source, ensuring transparency and community trust. Review and contribute to the project here:\
@@ -125,7 +173,7 @@ SSP Wallet has a comprehensive documentation available at with many guides, FAQs
 ### SSP Assets
 
 Integrated Blockchains, Assets - Coins, Tokens in SSP Wallet are available at:\
-[SSP Assets](https://docs.google.com/spreadsheets/d/1GUqGeV4hCwjKlxazY1vPY52owrEqXQ1UTchOKfkyS7c). SSP Supports custom ERC20 token imports on Ethereum network.
+[SSP Assets](https://docs.google.com/spreadsheets/d/1GUqGeV4hCwjKlxazY1vPY52owrEqXQ1UTchOKfkyS7c). SSP Supports custom ERC20 token imports on Ethereum, Polygon, BSC, Avalanche, and Base networks.
 
 ***
 
@@ -154,8 +202,11 @@ By using SSP Wallet, you agree to the terms outlined in the [SSP Disclaimer](htt
 
 ### Developer Information
 
-* **Built With:** React 18, TypeScript, Vite
-* **Node Version:** 20+
+* **Built With:** React 19, TypeScript, Vite
+* **Node Version:** 22+
+* **SSP Wallet Version:** 1.26.0
+* **SSP Key Version:** 1.15.0
+* **SSP Relay Version:** 1.9.0
 * **Run Development Mode:** `yarn dev`
 
 #### Key Development Features:
