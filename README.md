@@ -1,11 +1,24 @@
 ---
 icon: wallet
-cover: https://sspwallet.io/logo-light-mode.svg
-coverY: 50
+cover: .gitbook/assets/screenshots - 1.png
+coverY: 0
 layout:
+  width: default
   cover:
     visible: true
     size: hero
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
 ---
 
 # Welcome to SSP Wallet
@@ -118,6 +131,7 @@ This design ensures that **both devices are required** to authorize any transact
 SSP Wallet supports **WalletConnect v2** (now **Reown**), enabling seamless integration with thousands of decentralized applications (dApps) on EVM-compatible networks.
 
 #### Key Features:
+
 * **EVM dApp Compatibility:** Connect to any WalletConnect-enabled dApp on Ethereum, Polygon, BSC, Avalanche, and Base
 * **DeFi & NFT Support:** Full integration with DeFi protocols, NFT marketplaces, and trading platforms
 * **Account Abstraction Support:** Native ERC-4337 Account Abstraction on supported EVM chains
@@ -134,27 +148,30 @@ SSP Wallet supports **WalletConnect v2** (now **Reown**), enabling seamless inte
 SSP Wallet supports **15 blockchain networks** with native multisignature security:
 
 #### UTXO Networks (Native Multisignature)
-- **Bitcoin (BTC)** - P2WSH native segwit multisignature
-- **Bitcoin Testnet** - P2WSH testing network
-- **Bitcoin Signet** - P2WSH controlled test network
-- **Litecoin (LTC)** - P2WSH native segwit multisignature
-- **Dogecoin (DOGE)** - P2SH multisignature
-- **Bitcoin Cash (BCH)** - P2SH multisignature
-- **Ravencoin (RVN)** - P2SH multisignature with asset support
-- **Zcash (ZEC)** - P2SH multisignature (transparent addresses)
-- **Flux (FLUX)** - P2SH multisignature with cloud integration
-- **Flux Testnet** - P2SH testing network
+
+* **Bitcoin (BTC)** - P2WSH native segwit multisignature
+* **Bitcoin Testnet** - P2WSH testing network
+* **Bitcoin Signet** - P2WSH controlled test network
+* **Litecoin (LTC)** - P2WSH native segwit multisignature
+* **Dogecoin (DOGE)** - P2SH multisignature
+* **Bitcoin Cash (BCH)** - P2SH multisignature
+* **Ravencoin (RVN)** - P2SH multisignature with asset support
+* **Zcash (ZEC)** - P2SH multisignature (transparent addresses)
+* **Flux (FLUX)** - P2SH multisignature with cloud integration
+* **Flux Testnet** - P2SH testing network
 
 #### EVM Networks (Account Abstraction + WalletConnect)
-- **Ethereum (ETH)** - Full DeFi ecosystem, ERC-4337 support
-- **Polygon (POL)** - Low-cost transactions, gaming dApps
-- **Binance Smart Chain (BNB)** - High throughput, diverse DeFi
-- **Avalanche (AVAX)** - Fast finality, growing ecosystem  
-- **Base (ETH on Base)** - Coinbase Layer 2, consumer apps
+
+* **Ethereum (ETH)** - Full DeFi ecosystem, ERC-4337 support
+* **Polygon (POL)** - Low-cost transactions, gaming dApps
+* **Binance Smart Chain (BNB)** - High throughput, diverse DeFi
+* **Avalanche (AVAX)** - Fast finality, growing ecosystem
+* **Base (ETH on Base)** - Coinbase Layer 2, consumer apps
 
 #### Testnet Networks
-- **Sepolia** - Ethereum testnet
-- **Amoy** - Polygon testnet
+
+* **Sepolia** - Ethereum testnet
+* **Amoy** - Polygon testnet
 
 Each network maintains SSP's **2-of-2 multisignature security** while leveraging blockchain-specific optimizations and features.
 
