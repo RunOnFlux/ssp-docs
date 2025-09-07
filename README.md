@@ -1,7 +1,7 @@
 ---
 icon: wallet
 cover: .gitbook/assets/screenshots - 1.png
-coverY: 0
+coverY: 21.01123271889401
 layout:
   width: default
   cover:
