@@ -113,6 +113,7 @@
 * [Overview](getting-started-with-ssp-wallet-development/overview.md)
 * [Environment Requirements](getting-started-with-ssp-wallet-development/environment-requirements.md)
 * [Project Installation](getting-started-with-ssp-wallet-development/project-installation.md)
+* [Deterministic Builds](getting-started-with-ssp-wallet-development/deterministic-builds.md)
 * [SSP Wallet API](getting-started-with-ssp-wallet-development/ssp-wallet-api.md)
 * [Project Structure Overview](getting-started-with-ssp-wallet-development/project-structure-overview.md)
 * [Project Folders](getting-started-with-ssp-wallet-development/project-folders/README.md)
