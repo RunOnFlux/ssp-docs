@@ -1,7 +1,11 @@
 ---
 icon: wallet
 cover: https://sspwallet.io/logo-light-mode.svg
-coverY: 0
+coverY: 50
+layout:
+  cover:
+    visible: true
+    size: hero
 ---
 
 # Welcome to SSP Wallet
