@@ -1,6 +1,6 @@
 ---
 icon: wallet
-cover: https://gitbookio.github.io/onboarding-template-images/header.png
+cover: https://sspwallet.io/logo-light-mode.svg
 coverY: 0
 ---
 
