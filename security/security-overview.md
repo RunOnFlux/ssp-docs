@@ -28,7 +28,22 @@ SSP Wallet is designed with **security as the foundation**, not an afterthought.
 
 ## 🔒 Security Layers
 
-### Layer 1: Device Security
+### Layer 1: Runtime Security
+```
+┌─────────────────────────────────────────┐
+│          Runtime Security              │
+├─────────────────────────────────────────┤
+│ • LavaMoat Compartmentalization        │
+│ • SES Lockdown Protection              │
+│ • Supply Chain Attack Prevention       │
+│ • Module Isolation (70+ packages)      │
+│ • User-Verifiable Security Tests       │
+└─────────────────────────────────────────┘
+```
+
+> **Try it yourself!** Click the version number in the wallet footer 5 times rapidly to access the built-in security test page and verify all protections are active.
+
+### Layer 2: Device Security
 ```
 ┌─────────────────────────────────────────┐
 │           Device Security               │
@@ -40,7 +55,7 @@ SSP Wallet is designed with **security as the foundation**, not an afterthought.
 └─────────────────────────────────────────┘
 ```
 
-### Layer 2: Cryptographic Security
+### Layer 3: Cryptographic Security
 ```
 ┌─────────────────────────────────────────┐
 │        Cryptographic Security          │
@@ -52,7 +67,7 @@ SSP Wallet is designed with **security as the foundation**, not an afterthought.
 └─────────────────────────────────────────┘
 ```
 
-### Layer 3: Communication Security
+### Layer 4: Communication Security
 ```
 ┌─────────────────────────────────────────┐
 │       Communication Security           │
@@ -64,7 +79,7 @@ SSP Wallet is designed with **security as the foundation**, not an afterthought.
 └─────────────────────────────────────────┘
 ```
 
-### Layer 4: Network Security
+### Layer 5: Network Security
 ```
 ┌─────────────────────────────────────────┐
 │          Network Security              │
@@ -113,19 +128,22 @@ Example Ethereum: m/48'/60'/0'/0'/0/0
 ## 🛡️ Attack Resistance
 
 ### Protected Against
-✅ **Single Device Compromise**: 2-of-2 multisig protects your funds  
-✅ **Phishing Attacks**: Address validation and device verification  
-✅ **Man-in-the-Middle**: End-to-end encryption and certificate pinning  
-✅ **Brute Force**: Strong encryption and device fingerprinting  
-✅ **Server Compromise**: Zero-knowledge architecture protects keys  
-✅ **Replay Attacks**: Nonce-based message authentication  
-✅ **Social Engineering**: Multi-device approval required  
+✅ **Single Device Compromise**: 2-of-2 multisig protects your funds
+✅ **Phishing Attacks**: Address validation and device verification
+✅ **Man-in-the-Middle**: End-to-end encryption and certificate pinning
+✅ **Brute Force**: Strong encryption and device fingerprinting
+✅ **Server Compromise**: Zero-knowledge architecture protects keys
+✅ **Replay Attacks**: Nonce-based message authentication
+✅ **Social Engineering**: Multi-device approval required
+✅ **Supply Chain Attacks**: LavaMoat compartmentalization and policies
+✅ **Code Injection**: SES lockdown blocks eval and dynamic code execution
+✅ **Prototype Pollution**: Immutable prototypes prevent tampering
 
 ### Potential Risks (Mitigated)
-⚠️ **Both Device Loss**: Mitigated by seed phrase backup  
-⚠️ **User Error**: Mitigated by clear UI and confirmation steps  
-⚠️ **Physical Attack**: Mitigated by password protection  
-⚠️ **Supply Chain**: Mitigated by deterministic builds and open source  
+⚠️ **Both Device Loss**: Mitigated by seed phrase backup
+⚠️ **User Error**: Mitigated by clear UI and confirmation steps
+⚠️ **Physical Attack**: Mitigated by password protection
+⚠️ **Compromised Dependencies**: Mitigated by LavaMoat runtime protection  
 
 ## 🔍 Security Audits
 
@@ -211,19 +229,80 @@ SSP has undergone comprehensive security audits by [**Halborn Security**](https:
 
 ### Cryptographic Specifications
 - **Encryption**: AES-256-GCM with random IVs
-- **Key Derivation**: PBKDF2 with 100,000+ iterations  
+- **Key Derivation**: PBKDF2 with 100,000+ iterations
 - **Signatures**: ECDSA (Bitcoin/Ethereum), Schnorr (Account Abstraction)
 - **Hashing**: SHA-256 for Bitcoin, Keccak-256 for Ethereum
 - **HD Wallets**: BIP48 derivation for multisignature wallets
 
 ### Security Architecture
 - **Open Source**: Transparent code for community security review
-- **Deterministic Builds**: Verifiable build process
+- **Deterministic Builds**: Verifiable build process with SHA256 checksums
+- **Runtime Protection**: LavaMoat compartmentalization and SES lockdown
 - **Regular Updates**: Continuous security improvements
 - **Community Security**: GitHub-based security reporting
 
+## 🏗️ Deterministic Builds
+
+SSP Wallet implements **deterministic builds** to ensure complete transparency and verifiability of browser extension packages. This means anyone can rebuild the exact same packages and verify the integrity of what's submitted to browser stores.
+
+### Why This Matters for Security
+
+```
+┌──────────────────────────────────────────┐
+│    Deterministic Build Protection        │
+├──────────────────────────────────────────┤
+│ ✅ Verifiable Integrity                  │
+│ ✅ No Hidden Code Injection              │
+│ ✅ Reproducible Across Machines          │
+│ ✅ Browser Store Verification            │
+│ ✅ Build-Time Supply Chain Protection    │
+└──────────────────────────────────────────┘
+```
+
+The same source code **always** produces byte-identical binaries, making it impossible to inject malicious code during the build process without detection.
+
+### Quick Verification
+
+```bash
+# Clone the repository
+git clone https://github.com/RunOnFlux/ssp-wallet.git
+cd ssp-wallet
+
+# Build using Docker for reproducibility
+npm run build:deterministic
+
+# Verify SHA256 hashes match published version
+sha256sum -c SHA256SUMS
+```
+
+### Build Environment
+
+- **Docker Image**: `node:22.17.1-alpine` (SHA-pinned)
+- **Fixed Timestamp**: 2025-01-01 00:00:00 UTC (eliminates variation)
+- **Frozen Dependencies**: `yarn.lock` ensures exact versions
+- **Isolated Environment**: No host dependencies affect output
+- **Output**: SHA256-verified Chrome and Firefox packages
+
+### Security Guarantees
+
+**Protected Against:**
+- ❌ Build environment attacks (Docker isolation)
+- ❌ Supply chain substitution (frozen dependencies)
+- ❌ Timestamp manipulation (fixed SOURCE_DATE_EPOCH)
+- ❌ Hidden build steps (complete reproducibility)
+
+**Verified By:**
+- ✅ Security auditors can rebuild and verify
+- ✅ Browser store reviewers can validate submissions
+- ✅ Community members can independently verify
+- ✅ SHA256 checksums provide cryptographic proof
+
+For complete technical details, build instructions, troubleshooting, and Docker configuration, see the **[Deterministic Builds Developer Guide](../getting-started-with-ssp-wallet-development/deterministic-builds.md)**.
+
 ## Next Steps
 
+- **[Runtime Security with LavaMoat](runtime-security.md)** - Deep dive into runtime protection and supply chain security
+- **[Deterministic Builds Guide](../getting-started-with-ssp-wallet-development/deterministic-builds.md)** - Complete guide to verifying and reproducing builds
 - **[Halborn Security Audit](halborn-audit-2025.md)** - Complete audit results and findings
 - **[Device Security Guidelines](device-security.md)** - Secure your SSP Wallet devices
 - **[GitHub Security](https://github.com/RunOnFlux/ssp-wallet/security)** - Report security issues

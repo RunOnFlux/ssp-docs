@@ -20,8 +20,8 @@ For developers and reviewers who want to verify builds:
 git clone https://github.com/RunOnFlux/ssp-wallet.git
 cd ssp-wallet
 
-# Checkout the exact version being verified
-git checkout v1.26.0
+# Optional: Checkout a specific version if needed
+# git checkout v1.26.0
 
 # Build deterministically using Docker
 npm run build:deterministic
@@ -97,7 +97,7 @@ While both packages contain identical application code, they differ slightly in 
 
 ### For Browser Store Reviewers
 
-1. **Clone Repository:** Get the exact tagged version
+1. **Clone Repository:** Get the repository at the submitted commit/tag
 2. **Build Locally:** Run `npm run build:deterministic`
 3. **Compare Hashes:** Verify SHA256 sums match submission
 4. **Inspect Contents:** Unzip and review the generated packages

@@ -12,6 +12,7 @@
 ## 🔒 Security & Best Practices
 
 * [Security Overview](security/security-overview.md)
+* [Runtime Security with LavaMoat](security/runtime-security.md)
 * [Device Security Guidelines](security/device-security.md)
 * [Halborn Security Audit 2025](security/halborn-audit-2025.md)
 
