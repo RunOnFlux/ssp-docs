@@ -83,6 +83,8 @@
 * [Use Cases](enterprise/use-cases/README.md)
   * [DAO Treasury Management](enterprise/use-cases/dao-treasury.md)
   * [Corporate Treasury Workflow](enterprise/use-cases/corporate-treasury.md)
+* [Case Studies](enterprise/case-studies/README.md)
+  * [Flux Foundation](enterprise/case-studies/flux-foundation.md)
 
 ## 🛠️ Developer Integration Hub
 
