@@ -67,9 +67,22 @@
 * [Supported Blockchains Overview](blockchains/supported-blockchains.md)
 * [Networks Under Evaluation](blockchains/networks-under-evaluation.md)
 
-## 🏢 Professional & Enterprise Usage
+## 🏢 SSP Enterprise
 
-* [Enterprise Deployment Guide](enterprise/deployment-guide.md)
+* [SSP Enterprise Overview](enterprise/README.md)
+* [Getting Started](enterprise/getting-started.md)
+* [Creating Your First Organization](enterprise/creating-organization.md)
+* [Inviting Team Members & Roles](enterprise/inviting-members.md)
+* [Creating Multisig Vaults](enterprise/creating-vaults.md)
+* [Proposing & Signing Transactions](enterprise/transactions.md)
+* [Configuring Policy Controls](enterprise/policies.md)
+* [Migration](enterprise/migration/README.md)
+  * [From Fireblocks](enterprise/migration/from-fireblocks.md)
+  * [From Safe (Gnosis Safe)](enterprise/migration/from-safe.md)
+  * [From BitGo](enterprise/migration/from-bitgo.md)
+* [Use Cases](enterprise/use-cases/README.md)
+  * [DAO Treasury Management](enterprise/use-cases/dao-treasury.md)
+  * [Corporate Treasury Workflow](enterprise/use-cases/corporate-treasury.md)
 
 ## 🛠️ Developer Integration Hub
 
