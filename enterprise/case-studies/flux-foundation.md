@@ -47,7 +47,7 @@ SSP Enterprise was the only platform that addressed all three at once: native mu
 One platform, every chain the Foundation interacts with, one consistent signing model. The custom scripts are retired. The chat-thread audit trail is replaced by attributable on-platform records. Treasury and bridge multisig live side by side under the same governance.
 
 * **M-of-N vaults across every chain.** Bitcoin, Ethereum, Flux, and the EVM L2s — same platform, same mental model, same security guarantees.
-* **Two devices per signer, no exceptions.** Browser extension and mobile app required for every signature. A single compromised device cannot sign.
+* **Two devices per signer (default Dual mode).** With Dual Signing, the browser extension and mobile app are both required for every signature, so a single compromised device cannot sign. (Optional Key Only / Wallet Only vault modes use one device per signer — see [Creating Multisig Vaults](../creating-vaults.md).)
 * **Audit trail that holds up.** Every proposal, approval, and rejection logged with the signer and timestamp. Replaces the chat-thread reconstruction.
 * **Self-custody, end to end.** No vendor key share. No MPC infrastructure to trust. If SSP went away tomorrow, funds remain recoverable from signer seeds.
 

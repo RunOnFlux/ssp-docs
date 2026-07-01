@@ -5,8 +5,8 @@
 SSP Wallet supports **15 blockchain networks** (plus testnets) with true multisignature capabilities across UTXO and EVM-compatible blockchains. Each network uses the optimal implementation:
 
 - **UTXO Networks**: Native P2SH/P2WSH multisignature addresses
-- **EVM Networks**: Standard EOA addresses with Schnorr multisig message signing
-- **Account Abstraction**: Optional smart contract wallets on supported EVM chains
+- **EVM Networks**: ERC-4337 smart-contract accounts (CREATE2-derived), controlled by a 2-of-2 Schnorr multisig — not EOAs
+- **Account Abstraction**: The native and only EVM mode; every EVM address is an ERC-4337 smart account signed by both keys
 
 All networks maintain the same **2-of-2 multisignature security model** using BIP48 key derivation.
 
@@ -110,8 +110,8 @@ const btc = {
 #### Ethereum (ETH)
 - **Network**: Ethereum Mainnet
 - **Chain ID**: 1 (`0x1`)
-- **Address Type**: Standard EOA addresses (0x...) + Schnorr multisig message signing
-- **Account Abstraction**: Optional smart contract wallets available
+- **Address Type**: ERC-4337 smart-contract account (0x…), CREATE2-derived and controlled by a 2-of-2 Schnorr multisig — not a plain EOA
+- **Account Abstraction**: Native and only EVM mode (no EOA option)
 - **Features**:
   - Schnorr multisig message signing for enhanced security
   - EIP-712 structured data signing

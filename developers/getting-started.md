@@ -18,7 +18,7 @@ Ethers.js 6.15.0 for EVM interactions
 LocalForage for encrypted storage
 Window provider: window.ssp
 
-// SSP Key Mobile App (Current: v1.15.0)
+// SSP Key Mobile App (Current: v1.27.1)
 React Native 0.81 + TypeScript
 iOS 15.1+ / Android 7+ support
 Package: io.runonflux.sspkey
@@ -140,7 +140,10 @@ npm install @runonflux/aa-schnorr-multisig-sdk
 import * as aaSchnorrMultisig from '@runonflux/aa-schnorr-multisig-sdk';
 
 // This is used internally by SSP for message signing
-// External developers typically use WalletConnect or window.sspwallet
+// External developers typically use WalletConnect or the injected window.ssp provider
+// (window.ssp.request(method, params) — e.g. 'pay', 'sign_message', 'sspwid_sign_message', 'chains_info').
+// Note: EIP-1193 eth_* methods (eth_sendTransaction, personal_sign, …) work only over WalletConnect,
+// not the injected window.ssp provider.
 
 // Example: Verify a Schnorr multisig signature
 const isValidSignature = await contract.isValidSignature(
@@ -220,7 +223,7 @@ interface TransactionRequest {
 async function sendTransaction(txRequest: TransactionRequest) {
   try {
     // 1. Request sent to SSP Wallet extension
-    const txHash = await window.sspwallet!.request({
+    const txHash = await window.ssp!.request({
       method: 'eth_sendTransaction',
       params: [txRequest]
     });
@@ -247,7 +250,7 @@ async function sendTransaction(txRequest: TransactionRequest) {
 // EIP-712 structured data signing with SSP's Schnorr multisig
 async function signTypedData(account: string, typedData: any) {
   // SSP implements advanced Schnorr multisig for message signing
-  const signature = await window.sspwallet!.request({
+  const signature = await window.ssp!.request({
     method: 'eth_signTypedData_v4',
     params: [account, JSON.stringify(typedData)]
   });
@@ -259,7 +262,7 @@ async function signTypedData(account: string, typedData: any) {
 
 // Personal message signing with 2-of-2 multisig
 async function signPersonalMessage(account: string, message: string) {
-  const signature = await window.sspwallet!.request({
+  const signature = await window.ssp!.request({
     method: 'personal_sign',
     params: [message, account]
   });
@@ -280,14 +283,14 @@ async function signPersonalMessage(account: string, message: string) {
 
 async function switchNetwork(chainId: string) {
   try {
-    await window.sspwallet!.request({
+    await window.ssp!.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId }]
     });
   } catch (error) {
     if (error.code === 4902) {
       // Network not added to SSP, request to add it
-      await window.sspwallet!.request({
+      await window.ssp!.request({
         method: 'wallet_addEthereumChain',
         params: [{
           chainId,

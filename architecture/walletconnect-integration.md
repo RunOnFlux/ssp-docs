@@ -83,8 +83,7 @@ SSP Wallet's WalletConnect integration includes native support for ERC-4337 Acco
 ### Features
 - **Gasless Transactions**: Sponsored transaction execution
 - **Batch Operations**: Multiple actions in single transaction
-- **Session Keys**: Temporary permissions for specific dApps
-- **Social Recovery**: Enhanced account recovery options
+- **Key Recovery**: SSP is a fixed 2-of-2 multisig with **no** guardian/social recovery and no relay-side key recovery — each of the two keys is recoverable only from its own separate seed phrase
 
 ### Smart Account Capabilities
 ```typescript

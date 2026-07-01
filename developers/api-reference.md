@@ -5,7 +5,7 @@ This document describes the actual API endpoints provided by SSP Relay for commu
 ## Base URL
 
 ```
-Production: https://relay.ssp.runonflux.io/v1
+Production: https://relay.sspwallet.io/v1
 ```
 
 ## Authentication

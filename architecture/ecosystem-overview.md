@@ -17,7 +17,7 @@ graph TB
     
     subgraph "Blockchain Networks"
         D[Bitcoin/UTXO Networks<br/>P2SH/P2WSH Multisig]
-        E[Ethereum/EVM Networks<br/>EOA + Schnorr Signing]
+        E[Ethereum/EVM Networks<br/>ERC-4337 Smart Accounts<br/>Schnorr 2-of-2]
         F[15+ Other Blockchains]
     end
     
@@ -58,8 +58,8 @@ graph TB
 
 #### Supported Address Types:
 - **Bitcoin/UTXO**: P2SH, P2WSH (SegWit) multisignature addresses
-- **Ethereum/EVM**: Standard EOA addresses with Schnorr multisig message signing
-- **Account Abstraction**: Optional smart contract wallets on EVM chains
+- **Ethereum/EVM**: ERC-4337 smart-contract accounts (CREATE2-derived), controlled by a 2-of-2 Schnorr multisig — not EOAs
+- **Account Abstraction**: The native and only EVM mode; every EVM address is an ERC-4337 smart account signed by both keys
 
 ### 📱 SSP Key (Mobile App)
 **Secondary Key Holder & Transaction Authorizer**
@@ -221,7 +221,7 @@ Based on `/src/storage/blockchains.ts`:
 - **Zcash**: P2SH multisig, transparent addresses (shielded coming)
 - **Flux**: P2SH multisig, native integration with Flux ecosystem
 
-#### EVM Networks (EOA + Schnorr Signing)
+#### EVM Networks (ERC-4337 Smart Accounts + Schnorr Signing)
 - **Ethereum (Chain ID: 1)**: Schnorr multisig message signing, Account Abstraction
 - **Polygon (Chain ID: 137)**: Low-cost transactions, full EVM compatibility
 - **BSC (Chain ID: 56)**: High throughput, Binance ecosystem integration

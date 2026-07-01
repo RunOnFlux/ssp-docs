@@ -75,7 +75,11 @@
 * [Inviting Team Members & Roles](enterprise/inviting-members.md)
 * [Creating Multisig Vaults](enterprise/creating-vaults.md)
 * [Proposing & Signing Transactions](enterprise/transactions.md)
+* [Re-syncing Enterprise Signing Nonces](enterprise/resyncing-signing-nonces.md)
 * [Configuring Policy Controls](enterprise/policies.md)
+* [Webhook Notifications](enterprise/webhooks.md)
+* [Enterprise API](enterprise/api.md)
+* [Integrations Release Notes](enterprise/integrations-release-notes.md)
 * [Migration](enterprise/migration/README.md)
   * [From Fireblocks](enterprise/migration/from-fireblocks.md)
   * [From Safe (Gnosis Safe)](enterprise/migration/from-safe.md)
@@ -93,6 +97,8 @@
 
 ## 🔧 Troubleshooting & Support
 
+* [Lost or Replaced a Device?](troubleshooting/lost-or-replaced-device.md)
+* [Got a New Phone? Re-sync SSP Key](troubleshooting/resync-ssp-key-new-phone.md)
 * [Common Issues & Solutions](troubleshooting/common-issues.md)
 
 ## 🛡️ SSP Relay Development

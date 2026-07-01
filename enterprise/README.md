@@ -16,7 +16,7 @@ It runs on the same two-device security model as SSP Wallet (browser extension +
 
 * **Vaults that are real on-chain multisigs.** Not a custodian. Not MPC with a vendor share. Native Bitcoin multisig and EVM smart contract multisig, derived from your signers' xpubs.
 * **Pick your threshold.** 2-of-3 for a small team. 3-of-5 for a treasury council. 5-of-9 for a board. Whatever matches how your team actually makes decisions.
-* **Two devices per signer.** A compromised laptop alone can't sign. A compromised phone alone can't sign. Both, on every signature, every signer.
+* **Two devices per signer (default).** In the default Dual Signing mode, a compromised laptop alone can't sign and a compromised phone alone can't sign — both are required on every signature, for every signer. Optional Key Only / Wallet Only signing modes trade this two-device protection for more signers per vault (each signer signs with a single device) — see [Creating Multisig Vaults](creating-vaults.md).
 * **One platform, twelve chains.** BTC, ETH, LTC, DOGE, BCH, ZEC, RVN, FLUX, MATIC, BNB, AVAX, BASE — without juggling tools.
 * **A policy engine that's actually configurable from the UI.** Spending limits, address whitelists, time-locks, admin approvals, per-signer overrides. No Solidity. No modules to deploy.
 * **An audit log you can hand to an auditor.** Every member change, vault op, proposal, and signature, attributed and timestamped.

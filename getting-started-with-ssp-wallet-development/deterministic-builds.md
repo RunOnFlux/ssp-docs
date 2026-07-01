@@ -21,7 +21,7 @@ git clone https://github.com/RunOnFlux/ssp-wallet.git
 cd ssp-wallet
 
 # Optional: Checkout a specific version if needed
-# git checkout v1.26.0
+# git checkout v1.39.1
 
 # Build deterministically using Docker
 npm run build:deterministic
@@ -34,11 +34,11 @@ sha256sum -c SHA256SUMS
 
 The deterministic build system uses:
 
-- **Docker Image:** `node:22.17.1-alpine` (SHA-pinned for consistency)
+- **Docker Image:** `node:24.11.1-alpine` (SHA-pinned for consistency)
 - **Build Timestamp:** Fixed at `1735689600` (2025-01-01 00:00:00 UTC)
 - **Dependencies:** Locked via `yarn.lock` file
 - **Environment:** Isolated container with controlled variables
-- **Node.js:** Version 22.17.1 (specified in package.json engines)
+- **Node.js:** Version 24.11.1 (package.json engines require Node >=24)
 
 ## Technical Implementation
 
@@ -58,7 +58,7 @@ The `Dockerfile` ensures reproducibility through:
 
 ```dockerfile
 # Fixed base image with SHA pin
-FROM node:22.17.1-alpine@sha256:5539840ce9d013fa13e3b9814c9353024be7ac75aca5db6d039504a56c04ea59
+FROM node:24.11.1-alpine@sha256:2867d550cf9d8bb50059a0fff528741f11a84d985c732e60e19e8e75c7239c43
 
 # Deterministic environment variables
 ENV SOURCE_DATE_EPOCH=1735689600

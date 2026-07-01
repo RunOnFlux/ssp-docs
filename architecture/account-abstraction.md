@@ -140,23 +140,16 @@ const sessionKey = await sspWallet.createSessionKey({
 });
 ```
 
-### 4. Social Recovery
-Enhanced account recovery through trusted guardians:
+### 4. Recovery Model — No Social Recovery
 
-```typescript
-interface GuardianRecovery {
-  guardians: string[];
-  threshold: number;
-  recoveryDelay: number;
-}
+SSP does **not** implement social recovery, guardians, or any third-key fallback. Even on EVM / Account Abstraction accounts, spending is a strict **2-of-2**: every transaction requires **both** the SSP Wallet key and the SSP Key. There is no threshold-of-guardians mechanism and no relay-side key recovery.
 
-// Set up social recovery
-await smartAccount.setupSocialRecovery({
-  guardians: [guardian1, guardian2, guardian3],
-  threshold: 2, // 2 out of 3 guardians needed
-  recoveryDelay: 48 * 60 * 60 // 48 hours delay
-});
-```
+Each key is recoverable **only** from its own seed phrase:
+
+- The **SSP Wallet** seed phrase restores the first (wallet) key.
+- The **SSP Key** seed phrase restores the second (key) key.
+
+The two seed phrases are **different** and both are required. If either key's device **and** its seed phrase are lost, you hold only 1 of the 2 required keys and the account can no longer sign — funds are permanently frozen. **Back up both seed phrases independently and store them separately.** See [Lost or Replaced a Device?](../troubleshooting/lost-or-replaced-device.md).
 
 ## Implementation Details
 
@@ -228,8 +221,8 @@ interface RiskPolicy {
 ```
 
 ### 3. Emergency Controls
-- **Account Freezing**: Temporary suspension of operations
-- **Recovery Mode**: Fallback mechanisms for lost devices
+- **Two-key enforcement**: Every UserOperation requires both signatures; a single device cannot execute
+- **Device restore**: A lost device is restored only from its own seed phrase — there is no key recovery beyond the two seed phrases
 - **Upgrade Protection**: Secure contract upgrade procedures
 
 ## Gas Optimization

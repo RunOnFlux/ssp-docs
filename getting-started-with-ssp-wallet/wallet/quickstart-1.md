@@ -124,11 +124,11 @@ Before creating your wallet, carefully review the SSP Wallet Disclaimer:
 
 🚨 **MOST IMPORTANT STEP** 🚨
 
-Your seed phrase is the **master key** to your wallet. This 12-word phrase can restore your wallet if you lose access to this device.
+Your wallet seed phrase is the backup for **Key #1** of your 2-of-2 wallet (the SSP Wallet extension). This **24-word** phrase restores the SSP Wallet's half if you lose access to this device — but on its own it does **not** restore access to your funds. Spending every transaction also requires **Key #2**, which lives on your SSP Key phone and has its **own, separate** seed phrase (the two seeds are different). Anyone with only this seed has just *partial* control. Back up **both** seed phrases and store them separately.
 
 **⚠️ CRITICAL SECURITY WARNINGS:**
-- 🔑 **Seed phrase = Complete wallet control**
-- 💸 **Lost seed phrase = Lost funds PERMANENTLY**  
+- 🔑 **This seed = Key #1 only** — one of two keys; it cannot move funds alone (SSP Key holds Key #2, with its own separate seed)
+- 💸 **Lose a key's device *and* its seed = that key is gone; the 2-of-2 can no longer spend**  
 - 📱 **No customer support can recover lost seed phrases**
 - 🚫 **Never store digitally** (no photos, no cloud, no digital notes)
 - ✏️ **Only write on physical paper**
@@ -184,7 +184,7 @@ To ensure you've backed up your seed phrase correctly, you'll need to confirm sp
 ⚠️ **If verification fails:**
 - Go back and re-copy your seed phrase
 - Double-check spelling and word order
-- Ensure you have all 12 words written correctly
+- Ensure you have all 24 words written correctly
 
 ### Step 7: Complete Wallet Creation
 

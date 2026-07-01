@@ -169,7 +169,7 @@ Let's verify everything works with a small test transaction.
 
 ### Test Sending
 1. **Click "Send" in SSP Wallet**
-2. **Enter recipient address** (use testnet faucet address)
+2. **Enter recipient address** — an address you control (e.g. your exchange deposit address or a second wallet you own). Do **not** enter a testnet or faucet address: on mainnet a testnet address (starting `tb1`) is invalid and will be rejected, and a faucet is where you *obtain* testnet coins, not a destination to send to.
 3. **Enter small amount** ($1-5 worth)
 4. **Review transaction details**
 5. **Click "Send Transaction"**

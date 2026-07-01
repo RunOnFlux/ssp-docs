@@ -216,7 +216,7 @@ SSP has undergone comprehensive security audits by [**Halborn Security**](https:
    - Review recent account access
 
 3. **🔄 Recovery**
-   - If one device is compromised, immediately move funds using the other
+   - A single compromised device cannot move funds on its own — every transaction still requires both keys. While you still control both keys, use **both** devices together to move funds to a newly created wallet, then stop using the old setup
    - Create new wallet with fresh seed phrases
    - Report incident to security team
 
@@ -277,7 +277,7 @@ sha256sum -c SHA256SUMS
 
 ### Build Environment
 
-- **Docker Image**: `node:22.17.1-alpine` (SHA-pinned)
+- **Docker Image**: `node:24.11.1-alpine` (SHA-pinned)
 - **Fixed Timestamp**: 2025-01-01 00:00:00 UTC (eliminates variation)
 - **Frozen Dependencies**: `yarn.lock` ensures exact versions
 - **Isolated Environment**: No host dependencies affect output

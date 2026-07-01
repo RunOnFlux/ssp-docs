@@ -21,10 +21,10 @@ This guide covers frequently encountered issues with SSP Wallet based on actual 
 3. **Verify**: Both devices show same wallet addresses after sync
 
 #### **Manual Input Method**
-1. **SSP Key**: Go to Settings → Export Public Key
-2. **Copy Extended Public Key** from SSP Key
-3. **SSP Wallet**: Choose "Manual Input" and paste the key
-4. **Complete sync** process
+1. **SSP Wallet**: Open the chain's **Sync with SSP Key** view (in SSP Wallet Details) and copy the sync data — it has the form `chain:xpub` (the same value encoded in the sync QR code).
+2. **SSP Key**: On the sync screen, tap **Manual Input** and paste the copied wallet sync data (or use **Scan Code** to scan the wallet's QR instead).
+3. The SSP Key builds the 2-of-2 multisig from the wallet's key and posts its own public key back through the relay; the SSP Wallet completes the sync automatically once it verifies the derived address matches.
+4. **Verify** both devices show the same addresses. Repeat per chain if any chain is out of sync. (Sync data always flows Wallet → Key; there is no "Export Public Key" option in SSP Key.)
 
 ### Problem: "Addresses don't match between devices"
 
@@ -42,7 +42,7 @@ This guide covers frequently encountered issues with SSP Wallet based on actual 
 
 **Password Recovery:**
 1. Click "Restore Wallet" option
-2. Enter your 12-word seed phrase
+2. Enter your 24-word seed phrase
 3. Set new password
 4. Re-sync with SSP Key
 
@@ -113,7 +113,7 @@ This guide covers frequently encountered issues with SSP Wallet based on actual 
 
 **Recovery Process:**
 1. Click "Restore Wallet" in extension
-2. Enter 12-word seed phrase
+2. Enter 24-word seed phrase
 3. Set new password
 4. Re-sync with SSP Key mobile app
 

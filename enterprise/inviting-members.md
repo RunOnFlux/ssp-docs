@@ -130,7 +130,7 @@ To change a member's role after they've joined:
 
 Constraints:
 * Owners can promote anyone to Admin or demote Admins back to Member
-* Admins can promote Members to Viewer or demote them, but cannot touch other Admins or the Owner
+* Admins can change Members and Viewers between those two roles (Member ↔ Viewer), but cannot promote anyone to Admin, nor modify other Admins or the Owner — only the Owner can grant or revoke Admin
 * You can't demote yourself if doing so would leave the organization without an Admin
 
 ## Removing members
