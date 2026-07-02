@@ -14,7 +14,7 @@ SSP Wallet is designed with **security as the foundation**, not an afterthought.
 ### 2. **Zero-Knowledge Architecture**
 - Private keys **never leave your devices**
 - SSP Relay **cannot access** sensitive data
-- **End-to-end encryption** for all communications
+- **TLS-encrypted in transit**; the relay is **zero-knowledge**, handling only **public data** (xpubs, identities, public nonces, scripts, addresses) — never seeds, keys, or signatures
 
 ### 3. **Self-Custody First**
 - **You control** all private keys
@@ -75,7 +75,7 @@ SSP Wallet is designed with **security as the foundation**, not an afterthought.
 │ • TLS 1.3 Encryption                   │
 │ • Message Authentication Codes         │
 │ • Replay Attack Protection             │
-│ • Certificate Pinning                  │
+│ • Zero-Knowledge Relay (public data)   │
 └─────────────────────────────────────────┘
 ```
 
@@ -130,7 +130,7 @@ Example Ethereum: m/48'/60'/0'/0'/0/0
 ### Protected Against
 ✅ **Single Device Compromise**: 2-of-2 multisig protects your funds
 ✅ **Phishing Attacks**: Address validation and device verification
-✅ **Man-in-the-Middle**: End-to-end encryption and certificate pinning
+✅ **Man-in-the-Middle**: Browser/OS-enforced TLS plus a zero-knowledge relay that only handles public data, so a MITM cannot recover keys or secrets
 ✅ **Brute Force**: Strong encryption and device fingerprinting
 ✅ **Server Compromise**: Zero-knowledge architecture protects keys
 ✅ **Replay Attacks**: Nonce-based message authentication
@@ -230,7 +230,7 @@ SSP has undergone comprehensive security audits by [**Halborn Security**](https:
 ### Cryptographic Specifications
 - **Encryption**: AES-256-GCM with random IVs
 - **Key Derivation**: PBKDF2 with 100,000+ iterations
-- **Signatures**: ECDSA (Bitcoin/Ethereum), Schnorr (Account Abstraction)
+- **Signatures**: ECDSA (Bitcoin and other UTXO chains), Schnorr multisig (EVM/Ethereum via ERC-4337 Account Abstraction), ed25519 (Solana)
 - **Hashing**: SHA-256 for Bitcoin, Keccak-256 for Ethereum
 - **HD Wallets**: BIP48 derivation for multisignature wallets
 

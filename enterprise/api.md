@@ -333,7 +333,7 @@ curl https://relay.sspwallet.com/v1/api/vaults/70c1f2a3b4c5d6e7f8091a2b/proposal
           { "address": "bc1q...", "amount": "0.50000000" }
         ],
         "createdAt": "2026-06-23T12:00:00Z",
-        "expiresAt": "2026-06-24T12:00:00Z"
+        "expiresAt": "2026-06-30T12:00:00Z"
       }
     ],
     "pagination": { "limit": 20, "nextCursor": null, "hasMore": false }
@@ -378,7 +378,7 @@ curl https://relay.sspwallet.com/v1/api/vaults/70c1f2a3b4c5d6e7f8091a2b/proposal
     ],
     "proposedBy": "...",
     "createdAt": "2026-06-23T12:00:00Z",
-    "expiresAt": "2026-06-24T12:00:00Z"
+    "expiresAt": "2026-06-30T12:00:00Z"
   }
 }
 ```

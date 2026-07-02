@@ -2,35 +2,34 @@
 
 ## Welcome to SSP Development
 
-SSP Wallet provides a comprehensive ecosystem for developers to build secure, multisignature-enabled applications. This guide will get you started with integrating SSP's unique 2-of-2 multisignature capabilities into your projects.
+SSP Wallet lets your web app or dApp request payments and signatures from a user whose funds are protected by a **2-of-2 multisignature** (SSP Wallet browser extension + SSP Key mobile). This guide covers the two integration surfaces and their **real** APIs.
+
+{% hint style="warning" %}
+**There are two separate surfaces — don't mix them up:**
+
+1. **WalletConnect v2** — for standard **EIP-1193 `eth_*`** dApp flows (`eth_sendTransaction`, `personal_sign`, `eth_signTypedData_v4`, `wallet_switchEthereumChain`, …). SSP handles these **only** over WalletConnect.
+2. **Injected `window.ssp` provider** — SSP's own method set (`pay`, `sign_message`, `chains_info`, …). This provider does **not** implement `eth_*` methods; calling them returns an "Invalid method" error.
+
+Use WalletConnect if you already speak EIP-1193. Use `window.ssp` if you want SSP-native payment/signature requests across UTXO **and** EVM chains.
+{% endhint %}
 
 ## 🏗️ SSP Development Stack
 
-### Core Technologies (Actual Implementation)
 ```typescript
-// SSP Wallet Browser Extension (Current: v1.21.0)
+// SSP Wallet Browser Extension (Current: v1.39.1)
 React 19 + TypeScript + Vite
-Manifest v3 Web Extension
-Chrome 110+, Firefox 110+, Edge support
+Manifest v3 Web Extension (Chrome 110+, Firefox 110+, Edge)
 BIP48 HD Key Derivation (@scure/bip32, @scure/bip39)
-Schnorr Multisig (@runonflux/aa-schnorr-multisig-sdk 1.2.1)
-Ethers.js 6.15.0 for EVM interactions
-LocalForage for encrypted storage
-Window provider: window.ssp
+Schnorr Multisig (@runonflux/aa-schnorr-multisig-sdk) for EVM ERC-4337
+Injected global: window.ssp  (request/response only — no events)
 
 // SSP Key Mobile App (Current: v1.27.1)
-React Native 0.81 + TypeScript
-iOS 15.1+ / Android 7+ support
+React Native + TypeScript, iOS 15.1+ / Android 7+
 Package: io.runonflux.sspkey
-React Native Keychain 10.0.0 for secure storage
-MMKV 3.3.0 for encrypted local database
-Firebase Messaging for push notifications
 
-// SSP Relay Server (Optional)
-Node.js 20+ + TypeScript + MongoDB
-WebSocket + REST API for communication
-Zero-knowledge design (no private key access)
-Integration with various blockchain APIs
+// SSP Relay Server (coordination only)
+Node.js + TypeScript + MongoDB, WebSocket + REST
+Zero-knowledge design (no private key / seed access)
 ```
 
 ### Architecture Overview
@@ -39,444 +38,250 @@ graph TB
     subgraph "Developer Application"
         A[Your dApp/Service]
         B[WalletConnect v2]
-        C[SSP Integration Layer]
+        C[Injected window.ssp]
     end
-    
+
     subgraph "SSP Ecosystem"
         D[SSP Wallet Extension]
         E[SSP Relay Server]
         F[SSP Key Mobile]
     end
-    
+
     subgraph "Blockchain Networks"
-        G[Bitcoin Network]
-        H[Ethereum Network]
-        I[Other EVM Networks]
+        G[Bitcoin / UTXO]
+        H[Ethereum / EVM]
     end
-    
+
     A --> B
+    A --> C
     B --> D
+    C --> D
     D <--> E
     E <--> F
     D --> G
     D --> H
-    D --> I
-    
+
     style A fill:#4CAF50
     style D fill:#2196F3
     style E fill:#FF9800
     style F fill:#9C27B0
 ```
 
-## 🚀 Quick Integration Options
+## 🚀 Option 1 — WalletConnect (for EIP-1193 / `eth_*` dApps)
 
-### 1. WalletConnect Integration (Recommended)
-**Best for**: dApps, DeFi protocols, NFT marketplaces
+**Best for**: existing EVM dApps, DeFi, NFT marketplaces that already use EIP-1193.
+
+SSP Wallet pairs over WalletConnect v2 and handles the standard EVM method set: `eth_requestAccounts`, `eth_accounts`, `eth_sendTransaction`, `eth_sendRawTransaction`, `eth_sign`, `personal_sign`, `eth_signTypedData` / `_v3` / `_v4`, `wallet_switchEthereumChain`, `wallet_addEthereumChain`, `wallet_watchAsset`, `eth_chainId`, `net_version`, plus `chainChanged` / `accountsChanged` events.
 
 ```typescript
-// Install WalletConnect
-npm install @walletconnect/web3wallet @walletconnect/utils
-
-// Basic WalletConnect setup
-import { createWeb3Wallet } from '@walletconnect/web3wallet'
-
-const web3wallet = await createWeb3Wallet({
-  core: core, // WalletConnect Core instance
-  metadata: {
-    name: 'Your dApp Name',
-    description: 'Your dApp Description',
-    url: 'https://yourdapp.com',
-    icons: ['https://yourdapp.com/icon.png']
-  }
-});
-
-// SSP Wallet will appear as a connection option
-await web3wallet.pair({ uri: wcUri });
+// Your dApp connects to SSP the same way it connects to any WalletConnect wallet.
+// Use your existing WalletConnect / wagmi / web3modal setup and let the user
+// pick "SSP Wallet". Every transaction still requires 2-of-2 approval
+// (browser extension + mobile SSP Key), so expect a mobile approval step
+// before a tx hash returns.
 ```
 
-### 2. Direct Browser Extension Integration
-**Best for**: Web applications that need direct SSP integration
+{% hint style="info" %}
+On EVM, SSP accounts are **ERC-4337 smart accounts** (not EOAs). `eth_signTransaction` (raw offline signing) is therefore rejected — use `eth_sendTransaction`, which submits a UserOperation signed by both keys.
+{% endhint %}
+
+## 🔌 Option 2 — Injected `window.ssp` provider (SSP-native)
+
+**Best for**: web apps that want SSP-native payment and signature requests, across UTXO and EVM chains, without WalletConnect.
+
+### The provider
 
 ```typescript
-// SSP Wallet injects a provider into the window object
 declare global {
   interface Window {
     ssp?: {
-      request: (method: string, params?: any[]) => Promise<any>;
+      // TWO positional args: a method string and a single named-fields object.
+      request: (method: string, params?: Record<string, unknown>) => Promise<any>;
     };
   }
 }
 
-// Check if SSP Wallet is installed
-if (typeof window.ssp !== 'undefined') {
-  try {
-    // Request account access
-    const accounts = await window.ssp.request('eth_requestAccounts');
-    
-    // Send transaction (requires both browser and mobile device approval)
-    const txHash = await window.ssp.request('eth_sendTransaction', [{
-      to: '0x...',
-      value: '0x...',
-      data: '0x',
-      gasLimit: '0x...',
-      gasPrice: '0x...'
-    }]);
-  } catch (error) {
-    console.error('SSP request failed:', error);
-  }
-}
-
-// Note: All transactions require 2-of-2 multisig approval
-// User must confirm on both browser extension AND mobile app
+const isInstalled = typeof window.ssp !== 'undefined';
 ```
 
-### 3. Schnorr Multisig Integration
-**Best for**: Advanced applications needing SSP's unique multisig features
+{% hint style="danger" %}
+**Call shape matters.** The signature is `window.ssp.request(method, paramsObject)` — two positional arguments, where `params` is a **plain object of named fields**. It is **not** `request({ method, params })` and params is **not** a positional array. The global is `window.ssp` (there is no `window.sspwallet`).
+{% endhint %}
+
+### Response shape
+
+- On success the promise **resolves** to an object: `{ status: 'SUCCESS', ...methodFields }` (e.g. `pay` → `{ status, txid }`). Always check `res.status === 'SUCCESS'`.
+- On failure the promise **rejects** with an `Error` (`error.code` defaults to `4001` for user rejection). Wrap calls in `try/catch`.
+- The injected provider is **request/response only — no event listeners** (no `accountsChanged`/`chainChanged`). Use WalletConnect if you need events.
+
+### Supported methods
+
+| Method | Purpose | Key params (object) | Resolves |
+|--------|---------|---------------------|----------|
+| `pay` | Request a payment / asset send | `{ address, amount, chain, message?, contract? }` | `{ status, txid }` |
+| `sign_message` | Sign a message with a chain address | `{ message, address?, chain? }` | `{ status, signature, address, message }` |
+| `sspwid_sign_message` | Sign with the SSP Wallet Identity (FluxID) | `{ message }` | `{ status, signature, address, message }` |
+| `wk_sign_message` | 2-of-2 WK-Identity (P2WSH) message signing | `{ message, authMode?, origin, siteName?, description?, iconUrl? }` | `{ status, result: { walletSignature, walletPubKey, keySignature?, keyPubKey?, witnessScript, wkIdentity, message } }` |
+| `chains_info` | List all chains SSP supports | *(none)* | `{ status, chains: [{ id, name, symbol, decimals, chainId? }] }` |
+| `chain_tokens` | List tokens for a chain | `{ chain }` | `{ status, tokens: [{ contract, name, symbol, decimals }] }` |
+| `user_chains_info` | Chains the user has synced | *(none)* | `{ status, chains }` |
+| `user_addresses` | User's addresses for a chain (user consents) | `{ chain }` | `{ status, addresses: [string] }` |
+| `user_chains_addresses_all` | User-approved addresses across synced chains | *(none)* | `{ status, chains: [{ id, name, symbol, decimals, addresses }] }` |
+
+> `amount` is in **whole units** (e.g. `'4.124'`), `chain` is a chain id (`'btc'`, `'flux'`, `'eth'`, `'ltc'`, `'doge'`, `'zec'`, `'bch'`, `'rvn'`, … — call `chains_info` for the live list). See the authoritative reference in the SSP Wallet repo's `SSP_Wallet_API.md`. Enterprise integrators have additional `enterprise_*` methods (vault xpub / signing) that require the wallet to be synced with the SSP Key.
+
+### Requesting a payment
 
 ```typescript
-// Install SSP's Schnorr multisig SDK
-npm install @runonflux/aa-schnorr-multisig-sdk
-
-import * as aaSchnorrMultisig from '@runonflux/aa-schnorr-multisig-sdk';
-
-// This is used internally by SSP for message signing
-// External developers typically use WalletConnect or the injected window.ssp provider
-// (window.ssp.request(method, params) — e.g. 'pay', 'sign_message', 'sspwid_sign_message', 'chains_info').
-// Note: EIP-1193 eth_* methods (eth_sendTransaction, personal_sign, …) work only over WalletConnect,
-// not the injected window.ssp provider.
-
-// Example: Verify a Schnorr multisig signature
-const isValidSignature = await contract.isValidSignature(
-  messageHash,
-  schnorrSignatureData
-);
-// Returns ERC1271 magic value 0x1626ba7e if valid
-```
-
-## 🔧 Development Environment Setup
-
-### Prerequisites
-```bash
-# Node.js and package managers
-node --version    # v20+ required
-npm --version     # or yarn/pnpm
-
-# Git for cloning repositories
-git --version
-
-# Code editor with TypeScript support
-# VS Code, WebStorm, or similar
-```
-
-### Local Development Setup
-
-**Note**: SSP development primarily involves integrating with the existing SSP Wallet extension and mobile app.
-
-```bash
-# Option 1: Build from source (advanced)
-git clone https://github.com/RunOnFlux/ssp-wallet.git
-cd ssp-wallet
-npm install
-npm run build:chrome  # or build:firefox
-
-# Option 2: Test with existing SSP Wallet
-# Install SSP Wallet from browser extension store (when available)
-# Or load unpacked extension from build output
-
-# Create test application
-npm create vite@latest my-ssp-app --template react-ts
-cd my-ssp-app
-npm install
-```
-
-### Environment Variables
-```bash
-# .env.development
-VITE_WALLETCONNECT_PROJECT_ID=your_project_id
-VITE_NETWORK_ENV=testnet
-
-# .env.production  
-VITE_WALLETCONNECT_PROJECT_ID=your_project_id
-VITE_NETWORK_ENV=mainnet
-
-# Note: SSP Relay URLs vary by deployment
-# Default SSP installation uses different relay endpoints
-# Check sspwallet.io for current relay information
-```
-
-## 📚 Core Integration Patterns
-
-### 1. Basic Transaction Flow
-```typescript
-// Standard Ethereum transaction request
-interface TransactionRequest {
-  to: string;
-  value: string; // In hex format, e.g., '0x9184e72a000' for 0.01 ETH
-  data?: string; // Contract interaction data
-  gas?: string;  // Gas limit
-  gasPrice?: string; // Legacy gas pricing
-  maxFeePerGas?: string; // EIP-1559 gas pricing
-  maxPriorityFeePerGas?: string; // EIP-1559 priority fee
-}
-
-// Send transaction through SSP
-async function sendTransaction(txRequest: TransactionRequest) {
+if (typeof window.ssp === 'undefined') {
+  alert('SSP Wallet not found. Please install SSP Wallet.');
+} else {
   try {
-    // 1. Request sent to SSP Wallet extension
-    const txHash = await window.ssp!.request({
-      method: 'eth_sendTransaction',
-      params: [txRequest]
+    // Every send is a 2-of-2 approval: the user confirms in the extension
+    // AND on the SSP Key mobile app before a txid comes back.
+    const res = await window.ssp.request('pay', {
+      address: '0xRecipientOrChainAddress',
+      amount: '0.01',          // whole units, not hex/wei
+      chain: 'eth',            // 'btc' | 'flux' | 'eth' | 'ltc' | ...
+      message: 'Invoice #1234' // optional memo
     });
-    
-    // 2. SSP Wallet constructs transaction and requests approval
-    // 3. SSP Key receives push notification
-    // 4. User reviews and approves on mobile device
-    // 5. Transaction is completed with 2-of-2 multisig and broadcast
-    
-    return txHash;
-  } catch (error) {
-    if (error.code === 4001) {
-      console.log('User rejected transaction');
-    } else {
-      console.error('Transaction failed:', error);
+
+    if (res.status === 'SUCCESS') {
+      console.log('Broadcast tx:', res.txid);
     }
-    throw error;
+  } catch (error: any) {
+    if (error.code === 4001) console.log('User rejected the request');
+    else console.error('SSP request failed:', error.message ?? error);
   }
 }
 ```
 
-### 2. Message Signing (Schnorr Multisig)
+### Reading the user's addresses
+
 ```typescript
-// EIP-712 structured data signing with SSP's Schnorr multisig
-async function signTypedData(account: string, typedData: any) {
-  // SSP implements advanced Schnorr multisig for message signing
-  const signature = await window.ssp!.request({
-    method: 'eth_signTypedData_v4',
-    params: [account, JSON.stringify(typedData)]
-  });
-  
-  // Returns Schnorr multisig signature that can be verified on-chain
-  // using SSP's deployed contracts
-  return signature;
-}
+// Ask for addresses on one chain (the user chooses what to share):
+const eth = await window.ssp!.request('user_addresses', { chain: 'eth' });
+if (eth.status === 'SUCCESS') console.log(eth.addresses);
 
-// Personal message signing with 2-of-2 multisig
-async function signPersonalMessage(account: string, message: string) {
-  const signature = await window.ssp!.request({
-    method: 'personal_sign',
-    params: [message, account]
-  });
-  
-  // This signature is created using both SSP Wallet and SSP Key
-  // providing true 2-of-2 multisignature security
-  return signature;
-}
-
-// Note: SSP's message signing is unique because it requires
-// approval from both the browser extension AND mobile device
+// Or everything the user has synced + approved:
+const all = await window.ssp!.request('user_chains_addresses_all');
 ```
 
-### 3. Multi-Chain Support
+### Signing a message
+
 ```typescript
-// SSP Wallet supports both UTXO and EVM networks
-// For EVM networks, you can request network switching
+// Plain message signing on a given chain address:
+const sig = await window.ssp!.request('sign_message', {
+  message: 'Sign in to Example @ ' + Date.now(),
+  chain: 'btc',
+});
+if (sig.status === 'SUCCESS') console.log(sig.signature, sig.address);
 
-async function switchNetwork(chainId: string) {
-  try {
-    await window.ssp!.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId }]
-    });
-  } catch (error) {
-    if (error.code === 4902) {
-      // Network not added to SSP, request to add it
-      await window.ssp!.request({
-        method: 'wallet_addEthereumChain',
-        params: [{
-          chainId,
-          chainName: 'Custom Network',
-          nativeCurrency: {
-            name: 'ETH',
-            symbol: 'ETH',
-            decimals: 18
-          },
-          rpcUrls: ['https://rpc.example.com'],
-          blockExplorerUrls: ['https://explorer.example.com']
-        }]
-      });
-    }
-  }
+// 2-of-2 WK-Identity signing (both wallet + key sign). The message MUST be
+// prefixed with a 13-digit millisecond timestamp; authMode 2 = wallet + key.
+const wk = await window.ssp!.request('wk_sign_message', {
+  message: `${Date.now()}:login-to-example`,
+  authMode: 2,
+  origin: window.location.origin,
+  siteName: 'Example App',
+});
+if (wk.status === 'SUCCESS') {
+  const { wkIdentity, witnessScript, walletSignature, keySignature } = wk.result;
 }
-
-// SSP Supported EVM Chains (from blockchains.ts)
-const SSP_EVM_CHAINS = {
-  ETHEREUM: '0x1',      // Chain ID: 1
-  POLYGON: '0x89',      // Chain ID: 137
-  BSC: '0x38',          // Chain ID: 56
-  BASE: '0x2105',       // Chain ID: 8453
-  AVALANCHE: '0xa86a'   // Chain ID: 43114
-};
-
-// Note: SSP also supports UTXO networks (Bitcoin, Litecoin, etc.)
-// but these don't use the wallet_switchEthereumChain method
 ```
 
 ## 🔐 Security Considerations
 
-### Best Practices
-```typescript
-// Always verify network before transactions
-async function verifyNetwork(expectedChainId: string) {
-  const chainId = await sspProvider.request({
-    method: 'eth_chainId'
-  });
-  
-  if (chainId !== expectedChainId) {
-    throw new Error(`Wrong network. Expected: ${expectedChainId}, Got: ${chainId}`);
-  }
-}
+### Best practices
 
-// Validate addresses before sending transactions
-function isValidAddress(address: string): boolean {
+```typescript
+function isValidEvmAddress(address: string): boolean {
   return /^0x[a-fA-F0-9]{40}$/.test(address);
 }
 
-// Always use proper error handling
-async function safeTransaction(txRequest: TransactionRequest) {
-  try {
-    // Validate inputs
-    if (!isValidAddress(txRequest.to)) {
-      throw new Error('Invalid recipient address');
-    }
-    
-    // Verify network
-    await verifyNetwork('0x1'); // Ethereum mainnet
-    
-    // Send transaction
-    const result = await sendTransaction(txRequest);
-    return result;
-    
-  } catch (error) {
-    // Log for debugging (don't expose sensitive data)
-    console.error('Transaction failed:', error.message);
-    
-    // Return user-friendly error
-    throw new Error('Transaction failed. Please try again.');
+async function safePay(address: string, amount: string, chain: string) {
+  if (chain === 'eth' && !isValidEvmAddress(address)) {
+    throw new Error('Invalid recipient address');
   }
+  const res = await window.ssp!.request('pay', { address, amount, chain });
+  if (res.status !== 'SUCCESS') throw new Error('Payment not completed');
+  return res.txid;
 }
 ```
 
-### Security Guidelines
-- ✅ **Always validate user inputs** before sending to SSP
-- ✅ **Verify network matches expected chain** before transactions
-- ✅ **Use HTTPS** for all API communications
-- ✅ **Implement proper error handling** to prevent information leaks
-- ✅ **Never log sensitive data** (private keys, seed phrases)
-- ❌ **Don't bypass SSP's security confirmations**
-- ❌ **Don't store user credentials** in your application
-- ❌ **Don't assume immediate transaction confirmation**
+### Guidelines
+- ✅ **Validate user inputs** before requesting a `pay` / signature.
+- ✅ **Always check `res.status === 'SUCCESS'`** and `try/catch` for rejection (`error.code === 4001`).
+- ✅ **Use HTTPS** and never log signatures, keys, or seed phrases.
+- ✅ **Expect a mobile approval step** — do not assume immediate confirmation.
+- ❌ **Don't call `eth_*` on `window.ssp`** — those are WalletConnect-only.
+- ❌ **Don't reference `window.sspwallet`** — the global is `window.ssp`.
+- ❌ **Don't bypass SSP's 2-of-2 confirmations.**
 
 ## 🧪 Testing & Development
 
-### Local Testing Setup
 ```typescript
-// Mock SSP provider for testing
+// Mock the injected provider for tests — mirror the REAL shape:
+// positional (method, params-object) and { status: 'SUCCESS', ... } responses.
 class MockSSPProvider {
-  private accounts: string[] = [];
-  
-  async request({ method, params }: { method: string, params?: any }) {
+  async request(method: string, params?: Record<string, unknown>) {
     switch (method) {
-      case 'eth_requestAccounts':
-        return this.accounts;
-        
-      case 'eth_sendTransaction':
-        // Simulate transaction creation
-        return '0x123...abc';
-        
-      case 'personal_sign':
-        // Simulate message signing
-        return '0x456...def';
-        
+      case 'user_addresses':
+        return { status: 'SUCCESS', addresses: ['0x742d35Cc6634C0532925a3b8D404d8C92ca5c200'] };
+      case 'pay':
+        return { status: 'SUCCESS', txid: '0x123abc' };
+      case 'sign_message':
+        return { status: 'SUCCESS', signature: '0x456def', address: params?.address, message: params?.message };
       default:
-        throw new Error(`Method ${method} not supported`);
+        throw Object.assign(new Error(`Method ${method} not supported`), { code: 4001 });
     }
-  }
-  
-  // Test helpers
-  setAccounts(accounts: string[]) {
-    this.accounts = accounts;
   }
 }
 
-// Use in tests
-const mockProvider = new MockSSPProvider();
-mockProvider.setAccounts(['0x742d35Cc6634C0532925a3b8D404d8C92ca5c200']);
+// window.ssp = new MockSSPProvider() as any;
 ```
 
-### Integration Testing
-```bash
-# Run against SSP testnet
-npm run test:integration
+### Debugging
 
-# Test specific scenarios  
-npm run test:scenarios
-
-# Performance testing
-npm run test:performance
-```
-
-### Debugging Tools
 ```typescript
-// SSP debugging approach
-// Note: SSP uses simple request-response pattern, not event listeners
 console.log('SSP available:', typeof window.ssp !== 'undefined');
 
-// Check accounts
 if (window.ssp) {
   try {
-    const accounts = await window.ssp.request('eth_accounts');
-    console.log('Current accounts:', accounts);
-    
-    const chainId = await window.ssp.request('eth_chainId');
-    console.log('Current chain:', chainId);
+    const chains = await window.ssp.request('chains_info');   // real method
+    console.log('Supported chains:', chains.chains);
   } catch (error) {
     console.error('SSP debug error:', error);
   }
 }
-
-// Note: SSP doesn't have event listeners like MetaMask
-// Use periodic checks or page refresh for state changes
+// Note: the injected provider has no event listeners (unlike MetaMask).
+// Re-query on user action or use WalletConnect if you need chain/account events.
 ```
 
-## 📖 Example Applications
+## 📖 Example: Send button
 
-### 1. Simple Send Transaction
-```typescript
+```tsx
 import React, { useState } from 'react';
 
-function SendTransaction() {
+function SendPayment() {
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSend = async () => {
-    if (!window.ssp) {
-      alert('SSP Wallet not found. Please install SSP Wallet.');
-      return;
-    }
-    
+    if (!window.ssp) return alert('SSP Wallet not found. Please install SSP Wallet.');
     setIsLoading(true);
     try {
-      // Note: SSP requires both browser and mobile approval for transactions
-      const txHash = await window.ssp.request('eth_sendTransaction', [{
-        to: recipient,
-        value: ethers.parseEther(amount).toString(16), // Convert to hex
-        gasLimit: '0x5208' // 21000 in hex
-      }]);
-      
-      alert(`Transaction sent: ${txHash}\nUser approved on both devices.`);
-    } catch (error) {
-      alert(`Transaction failed: ${error.message || error}`);
+      const res = await window.ssp.request('pay', {
+        address: recipient,
+        amount,          // whole units, e.g. "0.01"
+        chain: 'eth',
+      });
+      if (res.status === 'SUCCESS') {
+        alert(`Transaction sent: ${res.txid}\nApproved on both devices.`);
+      }
+    } catch (error: any) {
+      alert(error.code === 4001 ? 'Rejected by user' : `Failed: ${error.message ?? error}`);
     } finally {
       setIsLoading(false);
     }
@@ -484,131 +289,23 @@ function SendTransaction() {
 
   return (
     <div>
-      <input 
-        placeholder="Recipient address"
-        value={recipient}
-        onChange={(e) => setRecipient(e.target.value)}
-      />
-      <input 
-        placeholder="Amount in ETH"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <button onClick={handleSend} disabled={isLoading}>
-        {isLoading ? 'Sending...' : 'Send Transaction'}
-      </button>
+      <input placeholder="Recipient address" value={recipient} onChange={(e) => setRecipient(e.target.value)} />
+      <input placeholder="Amount (whole units)" value={amount} onChange={(e) => setAmount(e.target.value)} />
+      <button onClick={handleSend} disabled={isLoading}>{isLoading ? 'Sending…' : 'Send'}</button>
     </div>
   );
 }
 ```
 
-### 2. DeFi Integration Example
-```typescript
-// Uniswap V3 integration example
-async function swapTokens(tokenIn: string, tokenOut: string, amountIn: string) {
-  const UNISWAP_ROUTER = '0xE592427A0AEce92De3Edee1F18E0157C05861564';
-  
-  // Encode swap function call
-  const swapData = encodeFunctionData({
-    abi: UNISWAP_V3_ABI,
-    functionName: 'exactInputSingle',
-    args: [{
-      tokenIn,
-      tokenOut,
-      fee: 3000,
-      recipient: userAddress,
-      deadline: Math.floor(Date.now() / 1000) + 60 * 20, // 20 minutes
-      amountIn,
-      amountOutMinimum: 0,
-      sqrtPriceLimitX96: 0
-    }]
-  });
-
-  // Send through SSP Wallet
-  const txHash = await sspProvider.request({
-    method: 'eth_sendTransaction',
-    params: [{
-      to: UNISWAP_ROUTER,
-      data: swapData,
-      value: '0x0'
-    }]
-  });
-
-  return txHash;
-}
-```
-
-## 🚀 Deployment & Production
-
-### Production Checklist
-- [ ] ✅ Mainnet configuration tested
-- [ ] ✅ Error handling implemented
-- [ ] ✅ User feedback mechanisms in place
-- [ ] ✅ Transaction monitoring setup
-- [ ] ✅ Security audit completed
-- [ ] ✅ Performance optimization done
-- [ ] ✅ Documentation updated
-- [ ] ✅ Support channels established
-
-### Performance Optimization
-```typescript
-// Cache provider instance
-let sspProviderInstance: any = null;
-
-function getSSPProvider() {
-  if (!sspProviderInstance && detectSSPWallet()) {
-    sspProviderInstance = (window as any).sspwallet;
-  }
-  return sspProviderInstance;
-}
-
-// Implement connection state management
-class SSPConnectionManager {
-  private isConnected = false;
-  private accounts: string[] = [];
-
-  async connect() {
-    if (this.isConnected) return this.accounts;
-    
-    const provider = getSSPProvider();
-    this.accounts = await provider.request({
-      method: 'eth_requestAccounts'
-    });
-    
-    this.isConnected = true;
-    return this.accounts;
-  }
-
-  disconnect() {
-    this.isConnected = false;
-    this.accounts = [];
-  }
-}
-```
+For EVM contract interactions (swaps, approvals, arbitrary `data`), use the **WalletConnect** path with standard `eth_sendTransaction` — the injected `window.ssp` provider intentionally exposes only the high-level methods above.
 
 ## 🆘 Support & Resources
 
-### Documentation
-- **[API Reference](api-reference.md)** - Complete API documentation
-- **[SDK Documentation](sdk-documentation.md)** - SDK usage guide
-- **[Sample Applications](sample-applications.md)** - Complete example projects
-
-### Community & Support
-- **GitHub Issues**: [Report bugs and request features](https://github.com/RunOnFlux/ssp-wallet/issues)
-- **GitHub Discussions**: [Ask questions and get help](https://github.com/RunOnFlux/ssp-wallet/discussions)
-- **Stack Overflow**: Tag your questions with `ssp-wallet`
-
-## 🎯 Next Steps
-
-### Immediate Actions
-1. **[Read API Docs](api-reference.md)** - Understand the SSP Relay API
-2. **[Review Code Examples](../getting-started-with-ssp-wallet-development/overview.md)** - Explore the development guides
-3. **[Check GitHub Issues](https://github.com/RunOnFlux/ssp-wallet/issues)** - See common questions and solutions
-
-### Stay Updated
-- **Watch GitHub repositories** for updates and new features
-- **Check release notes** for breaking changes and new features
+- **[API Reference](api-reference.md)** — SSP Relay API
+- **`SSP_Wallet_API.md`** (in the ssp-wallet repo) — authoritative injected-provider reference + a working `SSP_Wallet_API_Example.html`
+- **GitHub Issues**: [Report bugs / request features](https://github.com/RunOnFlux/ssp-wallet/issues)
+- **GitHub Discussions**: [Ask questions](https://github.com/RunOnFlux/ssp-wallet/discussions)
 
 ---
 
-**Ready to build secure, multisignature-enabled applications with SSP? Let's get started! 🚀**
+**Two surfaces, one wallet: WalletConnect for EIP-1193 `eth_*`, or the injected `window.ssp` provider for SSP-native `pay` / `sign_message` requests — both enforce 2-of-2 approval.**

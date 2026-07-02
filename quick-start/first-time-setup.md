@@ -159,7 +159,7 @@ Let's verify everything works with a small test transaction.
 
 ### Get Your Wallet Address
 1. **Click "Receive" in SSP Wallet**
-2. **Copy your Bitcoin address** (starts with 'bc1' or '3')
+2. **Copy your Bitcoin address** (starts with 'bc1')
 3. **Share this address** to receive funds
 
 ### Send a Small Test Amount
@@ -212,11 +212,11 @@ If the test transaction completes, your SSP Wallet setup is **perfect**!
 ### Backup Verification
 **Test your backups NOW while setup is fresh in memory:**
 
-1. **Record Current Wallet Addresses**
-2. **Reset SSP Wallet** (after backup verification)
-3. **Restore from Seed Phrase**
-4. **Verify Same Addresses Generate**
-5. **Re-sync with SSP Key**
+1. **Record your current wallet addresses**
+2. **Reset SSP Wallet** (only do this once your seed phrases are safely backed up)
+3. **Restore from your wallet seed phrase**
+4. **Re-sync with SSP Key** — scan the wallet's QR code. This is required first: after a restore the wallet holds only Key #1, so it **cannot show any multisig addresses until it re-syncs** with your SSP Key (Key #2)
+5. **Verify the same addresses generate** — once re-synced, the addresses should match those you recorded in step 1
 
 ## 🚨 Emergency Information
 
@@ -257,7 +257,7 @@ Congratulations! Verify you've completed everything:
 - **[Security Best Practices](../security/security-overview.md)** - Comprehensive security guide
 
 ### Start Using SSP Wallet
-- **Add More Cryptocurrencies** - Bitcoin, Ethereum, and 15+ blockchains supported
+- **Add More Cryptocurrencies** - Bitcoin, Ethereum, and 12+ blockchains supported
 - **Connect to dApps** - Use WalletConnect for DeFi and NFT platforms
 - **Set Up Contacts** - Save frequently used addresses
 - **Explore Advanced Features** - Account abstraction, batch transactions

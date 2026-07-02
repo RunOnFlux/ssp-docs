@@ -85,7 +85,7 @@ From the **Signers** dropdown, multi-select the members who will be on this vaul
 
 You'll see live counters: e.g., **Signers (3/8)** — you've selected 3, max is 8.
 
-> ⚠️ **Signers are permanent.** You cannot change the signer set after the vault is created. Make sure to include all members who should be able to sign transactions for this vault. Err on the side of including more — you can always set a higher threshold later (e.g., 3-of-5 instead of 3-of-3) if you want flexibility.
+> ⚠️ **Signers are permanent.** You cannot change the signer set after the vault is created. Make sure to include all members who should be able to sign transactions for this vault. Err on the side of including more signers — a larger pool lets you pick a more resilient ratio in the **next** step (e.g., 3-of-5 instead of 3-of-3). This choice is only available during creation: the signing threshold is fixed once the vault exists and cannot be changed afterward — to change it, create a new vault and migrate funds.
 
 Click **Next →**.
 

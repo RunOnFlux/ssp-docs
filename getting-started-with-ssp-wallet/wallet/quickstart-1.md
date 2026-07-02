@@ -138,7 +138,7 @@ Your wallet seed phrase is the backup for **Key #1** of your 2-of-2 wallet (the 
 1. **Prepare Materials**: Get pen and paper (not pencil)
 2. **Ensure Privacy**: Make sure no one can see your screen
 3. **Click "Show Mnemonic Wallet Seed Phrase"**
-4. **Write Down All 12 Words** in exact order
+4. **Write Down All 24 Words** in exact order
 5. **Double-Check Spelling** - every letter matters
 6. **Store Securely** in a safe location
 

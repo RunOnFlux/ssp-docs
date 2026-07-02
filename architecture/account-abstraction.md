@@ -73,8 +73,9 @@ class SchnorrMultisigValidator {
 
 ## Key Features
 
-### 1. Gasless Transactions
-Users can execute transactions without holding ETH for gas fees through paymaster sponsorship:
+### 1. Gas Payment
+
+SSP Wallet does **not** enable paymaster sponsorship on EVM chains — every EVM UserOperation is paid from the smart account's **own native gas balance**, so the account must hold the chain's native token (ETH, MATIC, BNB, …). The `paymasterAndData` field is a standard ERC-4337 slot that SSP does **not** currently use, so the example below is illustrative only. Gasless / sponsored fees in the SSP stack exist **only on Solana**, where the SSP Relay paymaster signs the fee-payer slot.
 
 ```typescript
 // Example: Sponsored transaction
@@ -114,31 +115,9 @@ const batchOps = [
 await smartAccount.executeBatch(batchOps);
 ```
 
-### 3. Session Keys
-Temporary permissions for specific dApps without requiring full wallet access:
+### 3. Session Keys — Not Supported
 
-```typescript
-interface SessionKey {
-  publicKey: string;
-  validUntil: number;
-  validAfter: number;
-  permissions: {
-    allowedTargets: string[];
-    maxAmount: string;
-    allowedFunctions: string[];
-  };
-}
-
-// Create session key for a gaming dApp
-const sessionKey = await sspWallet.createSessionKey({
-  validFor: 7 * 24 * 60 * 60, // 7 days
-  permissions: {
-    allowedTargets: [gameContract],
-    maxAmount: parseEther("0.1"),
-    allowedFunctions: ["play", "claim"]
-  }
-});
-```
+SSP Wallet does **not** implement session keys or delegated single-key spending. Every transaction always requires the full **2-of-2** (SSP Wallet + SSP Key); there is no `createSessionKey` API and no way for a dApp to transact with a temporary single key. This is deliberate — a session key would let one device spend alone, breaking the two-device security guarantee.
 
 ### 4. Recovery Model — No Social Recovery
 
@@ -161,14 +140,11 @@ sequenceDiagram
     participant W as SSP Wallet
     participant K as SSP Key
     participant B as Bundler
-    participant P as Paymaster
     participant S as Smart Account
     participant BC as Blockchain
     
     U->>W: Initiate Transaction
     W->>W: Build UserOperation
-    W->>P: Request Gas Sponsorship
-    P->>W: Approve & Sign
     W->>K: Request Signature
     K->>K: Sign UserOperation Hash
     K->>W: Return Signature
@@ -286,13 +262,11 @@ const aa = new SSPAccountAbstraction({
   provider: ethersProvider,
   entryPoint: ENTRY_POINT_ADDRESS,
   bundlerUrl: "https://bundler.example.com",
-  paymasterUrl: "https://paymaster.example.com",
   options: {
     gasMultiplier: 1.2, // 20% gas buffer
     maxRetries: 3,
     retryDelay: 1000,
     enableBatching: true,
-    enableSessionKeys: true,
   }
 });
 ```
@@ -322,7 +296,7 @@ The following networks are being evaluated for future support:
 ## Best Practices
 
 ### 1. Gas Management
-- Use paymasters for sponsored transactions
+- Ensure the smart account holds native gas (ETH/MATIC/BNB…) — SSP does not sponsor EVM gas
 - Batch operations when possible
 - Set appropriate gas limits
 - Monitor gas price fluctuations

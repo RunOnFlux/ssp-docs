@@ -116,10 +116,10 @@ In SSP's 2-of-2 system:
 ### If You Suspect Device Compromise
 
 **Immediate Actions:**
-1. 🚨 **Stop using compromised device** immediately
-2. 🔄 **Move funds to new wallet** if possible
-3. 🆕 **Set up fresh SSP Wallet** on clean device
-4. 🔑 **Use seed phrases** to restore on new device
+1. 🧊 **Don't panic — one device alone cannot move funds.** SSP is a strict 2-of-2 multisig, so every transaction (including a rescue transfer) needs BOTH your SSP Wallet and SSP Key. A single compromised device cannot steal funds on its own.
+2. 🆕 **Create a fresh SSP Wallet** with brand-new seed phrases on a clean device.
+3. 🔄 **While you still control BOTH keys, use both devices together to move funds** to the new wallet — this co-sign requires both the SSP Wallet and the SSP Key (including the possibly-compromised one).
+4. 🚨 **Only after the funds are safely moved, stop using / discard the old setup.** Do not wipe or abandon either old device before the funds have moved, or you may permanently freeze the 2-of-2.
 
 ### Getting Help
 - 📝 **Report security issues** via [GitHub Issues](https://github.com/RunOnFlux/ssp-wallet/issues)

@@ -41,7 +41,7 @@ To see your wallet seed, click "Show Mnemonic Wallet Seed Phrase"
 Click "Confirm" button
 
 {% hint style="info" %}
-Please make sure you backup your seed phrase as this serves as your control over your wallet. Losing the wallet seed will result in loss of access to your wallet. By clicking "Show Mnemonic Wallet Seed Phrase" you will be presented with your own unique seed phrase.
+Please back up this seed phrase offline and store it separately. It backs up **Key #1 only** — one of the two keys in your 2-of-2 wallet — so on its own it cannot move funds or restore access; your SSP Key holds Key #2, which has its own separate seed phrase. Back up **both** seeds separately: if a key's device **and** its seed phrase are both lost, the 2-of-2 can no longer sign and the funds are frozen. By clicking "Show Mnemonic Wallet Seed Phrase" you will be presented with your own unique seed phrase.
 {% endhint %}
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (9).png" alt="" width="306"><figcaption></figcaption></figure></div>

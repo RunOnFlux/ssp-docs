@@ -27,7 +27,7 @@ In SSP Key Mnemonic Seed Phrase click unhide button
 <div align="left"><figure><img src="../.gitbook/assets/image (79).png" alt=""><figcaption></figcaption></figure></div>
 
 {% hint style="info" %}
-Please make sure you backup your seed phrase as this serves as your control over your wallet. Losing it will result in loss of access to your key. By clicking "Show Mnemonic Wallet Seed Phrase" you will be presented with your own unique seed phrase.
+Please back up this seed phrase offline and store it separately. It backs up **Key #2 only** — one of the two keys in your 2-of-2 wallet — so on its own it cannot move funds; your SSP Wallet holds Key #1, which has its own separate seed phrase. Back up **both** seeds separately: if a key's device **and** its seed phrase are both lost, the 2-of-2 can no longer sign and the funds are frozen. By clicking "Show Mnemonic Wallet Seed Phrase" you will be presented with your own unique seed phrase.
 {% endhint %}
 
 Congratulations for retrieving your SSP Key Seed Phrase!

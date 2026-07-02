@@ -2,7 +2,7 @@
 
 ## Multi-Chain Architecture
 
-SSP Wallet supports **15 blockchain networks** (plus testnets) with true multisignature capabilities across UTXO and EVM-compatible blockchains. Each network uses the optimal implementation:
+SSP Wallet supports **12 mainnet blockchain networks** (plus testnets and a Solana devnet) with true multisignature capabilities across UTXO and EVM-compatible blockchains. Each network uses the optimal implementation:
 
 - **UTXO Networks**: Native P2SH/P2WSH multisignature addresses
 - **EVM Networks**: ERC-4337 smart-contract accounts (CREATE2-derived), controlled by a 2-of-2 Schnorr multisig — not EOAs
@@ -67,7 +67,7 @@ const btc = {
 - **Network**: Zcash Mainnet
 - **Address Type**: P2SH multisignature (transparent addresses)
 - **Script Type**: `p2sh`
-- **Derivation Path**: `m/48'/133'/0'/2'/0/0`
+- **Derivation Path**: `m/48'/133'/0'/0'/0/0`
 - **Features**:
   - Transparent transactions only (t-addresses)
   - Transaction expiry (1 hour default)
@@ -79,7 +79,7 @@ const btc = {
 - **Script Type**: `p2sh`
 - **Derivation Path**: `m/48'/3'/0'/0'/0/0`
 - **Features**:
-  - Very low transaction fees (1000+ DOGE typical fee)
+  - Very low transaction fees (typically well under 1 DOGE; auto-computed from transaction size at ~1100 sat/byte and hard-capped at 100 DOGE by config)
   - High transaction throughput
   - 1-minute block times
 
@@ -105,6 +105,15 @@ const btc = {
   - Built-in message capability (80 bytes)
   - Special integration with SSP ecosystem
 
+#### Bitcoin Cash (BCH)
+- **Network**: Bitcoin Cash Mainnet
+- **Address Type**: P2SH multisignature
+- **Script Type**: `p2sh`
+- **Derivation Path**: `m/48'/145'/0'/0'/0/0`
+- **Features**:
+  - CashAddr address format (`bitcoincash:` prefix)
+  - Low fees and fast confirmations
+
 ### Ethereum-Compatible (EVM) Networks
 
 #### Ethereum (ETH)
@@ -116,7 +125,7 @@ const btc = {
   - Schnorr multisig message signing for enhanced security
   - EIP-712 structured data signing
   - WalletConnect v2 integration
-  - Optional Account Abstraction (ERC-4337)
+  - Account Abstraction (ERC-4337) — native and mandatory for all EVM addresses (no EOA option)
   - DeFi protocol compatibility
 
 ```typescript
@@ -141,7 +150,7 @@ const eth = {
 #### Polygon (POL)
 - **Network**: Polygon Mainnet
 - **Chain ID**: 137 (`0x89`)
-- **Address Type**: Standard EOA + Schnorr multisig message signing
+- **Address Type**: ERC-4337 smart-contract account (0x…), CREATE2-derived and controlled by a 2-of-2 Schnorr multisig — not a plain EOA
 - **Features**:
   - Very low transaction fees (~$0.01)
   - Fast 2-second block times
@@ -152,7 +161,7 @@ const eth = {
 #### Binance Smart Chain (BSC)
 - **Network**: BNB Smart Chain
 - **Chain ID**: 56 (`0x38`)
-- **Address Type**: Standard EOA + Schnorr multisig message signing
+- **Address Type**: ERC-4337 smart-contract account (0x…), CREATE2-derived and controlled by a 2-of-2 Schnorr multisig — not a plain EOA
 - **Features**:
   - Low fees (typically $0.10-2.00)
   - High transaction throughput
@@ -163,7 +172,7 @@ const eth = {
 #### Avalanche (AVAX)
 - **Network**: Avalanche C-Chain
 - **Chain ID**: 43114 (`0xa86a`)
-- **Address Type**: Standard EOA + Schnorr multisig message signing
+- **Address Type**: ERC-4337 smart-contract account (0x…), CREATE2-derived and controlled by a 2-of-2 Schnorr multisig — not a plain EOA
 - **Features**:
   - Sub-second transaction finality
   - Low fees (~$0.10-5.00)
@@ -174,7 +183,7 @@ const eth = {
 #### Base
 - **Network**: Base Mainnet (Coinbase L2)
 - **Chain ID**: 8453 (`0x2105`)
-- **Address Type**: Standard EOA + Schnorr multisig message signing
+- **Address Type**: ERC-4337 smart-contract account (0x…), CREATE2-derived and controlled by a 2-of-2 Schnorr multisig — not a plain EOA
 - **Features**:
   - Coinbase-backed Layer 2 solution
   - Very low fees (~$0.01-0.50)
@@ -246,12 +255,14 @@ interface EVMTransaction {
 
 ## 🌍 Network Selection & Switching
 
-### Automatic Network Detection
-SSP Wallet automatically detects the appropriate network based on:
-- Transaction recipient address format
-- Token contract address
-- User preference settings
-- dApp requested network
+### Network Selection
+
+SSP Wallet does not infer the network from a recipient address or token contract. The active network is selected explicitly:
+
+- **User selection**: You pick the active chain in the wallet's chain selector; each chain has its own wallet and send view.
+- **dApp request**: A connected dApp can request a switch via WalletConnect's `wallet_switchEthereumChain`, which SSP maps to a matching configured EVM chain and surfaces for your approval.
+
+When you paste a recipient address, SSP validates it against the currently selected chain and warns you only if the address looks like it belongs to a different chain *type* (EVM / Solana / UTXO). Because all EVM chains share the same `0x` address format, SSP cannot detect which EVM network an address belongs to — always confirm you are on the intended network before sending, as transactions are irreversible.
 
 ### Manual Network Switching
 ```typescript

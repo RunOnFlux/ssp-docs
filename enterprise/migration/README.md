@@ -20,7 +20,7 @@ Common reasons we hear:
 
 * **[From Fireblocks](from-fireblocks.md)** — moving off MPC custody to true self-custody multisig
 * **[From Safe (Gnosis Safe)](from-safe.md)** — adding Bitcoin/UTXO chains, two-device security, and policies
-* **[From BitGo](from-bitgo.md)** — moving off 2-of-3-with-vendor to N-of-N self-custody
+* **[From BitGo](from-bitgo.md)** — moving off 2-of-3-with-vendor to M-of-N self-custody
 
 ## Universal pre-migration checklist
 

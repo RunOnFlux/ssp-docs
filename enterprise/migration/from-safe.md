@@ -8,11 +8,11 @@ This guide is for teams currently using Safe (formerly Gnosis Safe) who want to 
 
 ## Why teams move from Safe
 
-* **Multi-chain native** — Safe is EVM-only. SSP Enterprise covers Bitcoin, Litecoin, Dogecoin, Bitcoin Cash, Zcash, Ravencoin, Flux, plus all the EVM chains Safe supports. Treasuries holding both BTC and ETH no longer need two platforms.
+* **Multi-chain native** — Safe is EVM-only. SSP Enterprise covers Bitcoin, Litecoin, Dogecoin, Bitcoin Cash, Zcash, Ravencoin, Flux, plus the major EVM chains (Ethereum, Polygon, BNB Chain, Avalanche, Base). Treasuries holding both BTC and ETH no longer need two platforms.
 * **Stronger per-signer security** — Safe relies on whatever wallet each signer happens to use (MetaMask, Ledger, etc.). SSP Enterprise enforces **two-device security per signer** (browser extension + mobile app), so compromising one device of one signer is not enough to sign.
 * **Built-in policy engine** — Safe needs Modules/Guards configured per-vault, often with custom Solidity. SSP Enterprise has spending limits, whitelists, time-locks, admin approvals, per-signer overrides — all configured through the UI, no smart contract deployment.
 * **Simpler member management** — Safe stores signers as Ethereum addresses; you have to track who each address belongs to manually. SSP Enterprise has named members, roles, audit logs — true team management.
-* **No transaction relayer dependencies** — Safe transactions often depend on relayers (especially on L2s). SSP Enterprise broadcasts directly via your chosen RPC.
+* **Native broadcasting on UTXO chains** — For Bitcoin, Litecoin, Dogecoin and the other UTXO chains, SSP Enterprise broadcasts signed transactions directly to full nodes. (Note: on EVM chains, SSP Enterprise vaults are ERC-4337 smart accounts, so EVM transactions are UserOperations relayed through an ERC-4337 bundler — the same class of infrastructure dependency Safe has on EVM, not a differentiator.)
 
 ## What you keep, what changes
 

@@ -96,7 +96,7 @@ A time-lock adds a waiting period between when a proposal reaches its signing th
 During the delay window:
 
 * The proposal status is **Awaiting Time Lock**
-* Any vault member can **Cancel** the proposal (no signing required for cancellation during this window)
+* Only a **vault admin** — the org Owner, an org Admin, or a vault-level Admin — can **Cancel** the proposal during this window (no additional signing is needed to cancel). A plain **Member** or **Viewer** cannot cancel a time-locked proposal; the attempt is rejected with an authorization error. If a non-admin signer spots a suspicious transaction during the delay, they must immediately escalate to an Owner/Admin — who can Cancel it, or use **Emergency Freeze** (also Owner/Admin-only) to block the broadcast — before the timer expires.
 * When the window closes, the **Broadcast** button becomes available
 
 Use this for:

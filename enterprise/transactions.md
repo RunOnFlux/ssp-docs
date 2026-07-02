@@ -63,7 +63,7 @@ By default, all vault signers can approve the proposal. If you want only specifi
 
 This is useful when you know certain signers are unavailable, or when policy requires a specific subset (e.g., always include the CFO on payroll).
 
-The platform burns one nonce per designated signer at proposal creation, so designate carefully — see [Why nonces matter](#why-nonces-matter) below.
+On **EVM** vaults, the platform burns **two** signing nonces per designated signer at proposal creation — one from that signer's SSP Wallet and one from their SSP Key (single-device vaults burn one). EVM vaults require you to designate **exactly** the threshold number of signers (M of N), so you can't over-designate and waste nonces. On **UTXO** chains (Bitcoin, Litecoin, …) no signing nonces are consumed at proposal creation, and **Solana** uses a separate durable-nonce pool that is released if the proposal is rejected or expires. See [Why nonces matter](#why-nonces-matter) below.
 
 ### Step 7 — Review
 
@@ -75,7 +75,7 @@ Click **Review Proposal**. A confirmation modal shows:
 * Vault and chain
 * Designated signers
 
-Verify everything carefully. Once you create the proposal, **the nonces are committed** — even rejecting or expiring the proposal won't return them.
+Verify everything carefully. On **EVM** vaults, once you create the proposal **the nonces are committed** — even rejecting or expiring the proposal won't return them. (UTXO vaults burn no nonces at creation; Solana releases its durable nonce if the proposal is rejected or expires.)
 
 ### Step 8 — Create and sign
 
@@ -153,7 +153,7 @@ Rejecting your own signature alone does not cancel the proposal — it just reco
 
 * Enough signers reject that the remaining signers cannot reach the threshold
 * The proposer cancels it explicitly (if no one has signed yet)
-* It expires (default: 24 hours after creation)
+* It expires 7 days after creation
 
 > **Note:** Rejecting or letting a proposal expire **does not** return the burned nonces. If the proposal needs to be re-attempted, the proposer creates a new one and burns fresh nonces.
 
@@ -165,7 +165,7 @@ When a proposal is created with designated signers, the platform **immediately b
 
 Practical implications:
 
-* **Don't designate signers you don't intend to ask** — if you designate 5 signers but only need 3, you've burned 4 extra nonces
+* **Designation is exact on EVM** — an M-of-N vault requires you to name exactly M signers, so the burn is always 2 × M nonces (or M in single-device mode); there's no way to over-designate and waste nonces
 * **Failed signing burns nonces** — if a signer's wallet glitches mid-sign, the nonces are still spent
 * **Cancelled or expired proposals burn nonces** — the burn happens at creation, not at completion
 * **Nonce pools auto-replenish** — your wallet/key sync new nonces in the background; you'll rarely run out

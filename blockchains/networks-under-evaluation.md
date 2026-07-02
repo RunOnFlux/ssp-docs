@@ -6,27 +6,18 @@ SSP Wallet continuously evaluates new blockchain networks for integration, focus
 
 The following networks are actively being researched and evaluated for future SSP Wallet support:
 
-### 🌐 Solana (SOL)
-**Status**: Development in Progress  
-**Evaluation Focus**: Squads-based multisignature with custom bootloader implementation
+### 🌐 Solana (SOL) — Implemented (Devnet)
+**Status**: Live on **devnet**; mainnet pending a security audit. Solana has graduated from evaluation to a working integration.
 
-#### Technical Considerations
-- **Account Model**: Account-based architecture different from UTXO and EVM
-- **Squads Integration**: Building on Squads v4 multisignature framework
-- **Custom Bootloader**: Self-bootstrapping multisig governance system
-- **Program-Derived Addresses (PDAs)**: Deterministic address generation
+Solana uses **SSP's own self-initiating multisig program** — **not** Squads, and with no separate bootloader. The multisig account is a Program-Derived Address deterministically derived from `sha256(sorted_members) + threshold`, so registration is permissionless and spends are gated purely by the threshold check (Bitcoin-P2WSH-style).
 
-#### Development Challenges
-- **Solana-Specific Architecture**: Adapting SSP's 2-of-2 model to Solana's account system
-- **Squads Integration**: Working with existing Squads multisig infrastructure
-- **Custom Program Development**: Building specialized bootloader program
-- **Cross-Program Invocations (CPI)**: Complex inter-program communications
+#### Delivered properties
+- **Trustless initialization**: No single "creator" signer — anyone can register the deterministic multisig.
+- **Front-running resistance**: The config is bound to the member/threshold hash.
+- **Immutable configuration**: Members and threshold are fixed at creation (to "rotate," migrate funds to a new multisig).
+- **PDA vault model**: A separate SystemProgram-owned vault holds funds; the program authorizes spends via `invoke_signed`.
 
-#### Planned Features
-- **Trustless Initialization**: Eliminate single "creator" signer requirement
-- **Front-Running Resistance**: Cryptographic commitments for security
-- **Configuration Immutability**: Unchangeable multisig parameters after creation
-- **Threshold Consensus**: Group consensus for multisig creation
+See [Supported Blockchains](supported-blockchains.md) for live integration details.
 
 ---
 

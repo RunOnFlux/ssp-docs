@@ -145,7 +145,7 @@ SSP Wallet supports **WalletConnect v2** (now **Reown**), enabling seamless inte
 
 ### Supported Blockchains
 
-SSP Wallet supports **15 blockchain networks** with native multisignature security:
+SSP Wallet supports **12 mainnet blockchain networks** (plus testnets) with native multisignature security:
 
 #### UTXO Networks (Native Multisignature)
 
