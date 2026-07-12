@@ -4,9 +4,9 @@ icon: code
 
 # Enterprise API
 
-The SSP Enterprise API gives your own systems programmatic, **read-only** access to your organization's vaults, balances, transactions, proposals, and portfolio analytics. Use it to feed an internal dashboard, reconcile balances, monitor proposal status, or export data into your own tooling — without logging into the app.
+The SSP Enterprise API gives your own systems programmatic access to your organization's vaults, balances, transactions, proposals, and portfolio analytics. Use it to feed an internal dashboard, reconcile balances, monitor proposal status, or export data into your own tooling — without logging into the app. Read access is read-only; a single optional write scope lets automation **create a proposal** that still requires your normal signatures to execute.
 
-> **The API is strictly read-only.** Every endpoint is a `GET`. There is **no** way to create a proposal, sign a transaction, move funds, or change any organization setting through an API key. Money can only ever move through the normal two-party signing flow in SSP Wallet and SSP Key. This is the core safety property of the API, enforced by construction.
+> **A key can never move funds.** The read scopes are `GET`-only. The write scopes only ever queue or configure — never sign, approve, or broadcast: `proposals:write` can **create a pending proposal**, `policies:write` can adjust a vault's spending *rules*, `vaults:write` can create/configure vaults, and `contacts:write` edits a labelling address book. Every proposal, however it was created, still requires the vault's M-of-N device signatures (each signed by both SSP Wallet and SSP Key) to execute. So a leaked key can, at most, *propose* a payment your signers must then approve in the app — it can never move money or change ownership. This is the core safety property of the API, enforced by construction.
 
 ## Base URL
 
@@ -47,7 +47,7 @@ API keys are created and managed inside the SSP Enterprise app, under **Settings
 
 From the same **Settings → Developers → API Keys** screen, an owner or admin can revoke any key. Revocation is **immediate** — the key is checked against its status on every request, so the next call made with a revoked key fails with `401`. Revocation cannot be undone; create a new key if you need access again.
 
-Keep your keys secret. Treat `ssp_live_...` like a password: never commit it to source control, embed it in a frontend bundle, or paste it into a browser. A leaked key can read one organization's data, but — because the API is read-only — it can never move funds or change anything.
+Keep your keys secret. Treat `ssp_live_...` like a password: never commit it to source control, embed it in a frontend bundle, or paste it into a browser. A leaked key can read one organization's data and, if it has the `proposals:write` scope, create a *pending* proposal — but it can never sign, move funds, or change settings, because execution always requires your vault's device signatures.
 
 ## Scopes
 
@@ -61,8 +61,17 @@ Each key carries a set of **scopes**. Every endpoint requires one specific scope
 | `transactions:read` | Per-vault transaction history |
 | `proposals:read` | Per-vault transaction proposals |
 | `analytics:read` | Aggregated portfolio analytics |
+| `contacts:read` | Your organization's saved address book |
+| `policies:read` | Vault & org policies, policy rules, approval groups, and policy templates |
 
-All scopes are read-only. There is no scope that grants the ability to write, sign, or move funds.
+| Write scope | Grants |
+|---|---|
+| `proposals:write` | Create or cancel a **pending** proposal on a vault — never signs or moves funds |
+| `contacts:write` | Manage the organization address book (create / update / delete contacts) |
+| `policies:write` | Update a vault's spending policy (limits, whitelist, rules) — a control, not a fund movement |
+| `vaults:write` | Create and configure vaults, and manage vault tag definitions — never signs or moves funds |
+
+The read scopes are read-only. The write scopes never sign, approve, broadcast, or move funds: `proposals:write` can only create or cancel a pending proposal (which still requires your vault's device signatures to execute), `contacts:write` only edits a labelling address book that has no effect on policy, `policies:write` only tightens or loosens a vault's spending *rules*, and `vaults:write` only creates or configures vaults (a vault created this way holds no funds until you fund it, and still needs its M-of-N devices to spend). None can move money or approve a proposal. A `policies:write` key's creator must be an admin of the vault it targets; `vaults:write` requires an organization admin. Creating a key with any write scope requires the **Pro plan or higher**.
 
 ## Response format
 
@@ -418,6 +427,338 @@ curl https://relay.sspwallet.com/v1/api/analytics/portfolio \
 }
 ```
 
+---
+
+### Read policy configuration
+
+Read back the policy configuration that the `policies:write` endpoints manage — useful for auditing, drift detection, or syncing config into your own systems.
+
+```
+GET /v1/api/vaults/:vaultId/policy         # vault policy         (policies:read)
+GET /v1/api/vaults/:vaultId/policy-rules   # vault policy rules   (policies:read)
+GET /v1/api/org/policy                     # org policy           (policies:read)
+GET /v1/api/org/policy-rules               # org policy rules     (policies:read)
+GET /v1/api/approval-groups                # approval groups      (policies:read)
+GET /v1/api/policy-templates               # policy template catalog (policies:read)
+```
+
+Scope: `policies:read`. Org-scoped (the key determines the organization); no signing material is ever returned. Each mirrors the shape written by the corresponding `policies:write` endpoint, so config round-trips.
+
+```bash
+curl https://relay.sspwallet.com/v1/api/vaults/VAULT_ID/policy \
+  -H "Authorization: Bearer ssp_live_..."
+```
+
+---
+
+### Create a proposal
+
+```
+POST /v1/api/vaults/:vaultId/proposals
+```
+
+Scope: `proposals:write` · Requires the **Pro plan or higher**.
+
+Creates a **pending** transaction proposal on a vault — the same object the app creates when a signer proposes a payment. The proposal is attributed to the wkIdentity that created the API key, who **must be a signer or admin on the target vault**. It runs through your organization's full policy engine (spending limits, whitelists, approval workflows, IP/geo rules) exactly like an app-created proposal.
+
+This endpoint **only creates a proposal**. It never signs, approves, or broadcasts. The returned proposal has `status: "pending"` and an empty `signatures` list; it executes only once your vault's M-of-N signers approve it in SSP Wallet + SSP Key. A write key can propose a payment, never send one.
+
+Body:
+
+| Field | Type | Notes |
+|---|---|---|
+| `recipients` | array (required) | One or more `{ "address": "...", "amount": "1.5" }`. `amount` is a decimal string in the chain's main unit. |
+| `memo` | string | Optional note stored with the proposal. |
+| `fee`, `feePerByte`, `gasPrice`, … | — | Optional chain-specific fee controls (same options as the app). |
+| `tokenContract`, `tokenSymbol`, `tokenDecimals` | — | For ERC-20 transfers (EVM only); omit for native currency. |
+
+The vault's chain is taken from the vault itself — you don't pass it.
+
+```bash
+curl -X POST https://relay.sspwallet.com/v1/api/vaults/VAULT_ID/proposals \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "recipients": [{ "address": "bc1q...", "amount": "0.25" }], "memo": "Vendor payment" }'
+```
+
+```json
+{
+  "status": "success",
+  "data": {
+    "success": true,
+    "proposal": {
+      "id": "665f...",
+      "vaultId": "665a...",
+      "chain": "btc",
+      "status": "pending",
+      "requiredSignatures": 2,
+      "signatureCount": 0,
+      "recipients": [{ "address": "bc1q...", "amount": "0.25" }],
+      "createdAt": "2026-07-09T10:00:00Z"
+    }
+  }
+}
+```
+
+If the key's creator isn't a vault signer, a policy blocks the transfer, funds are insufficient, or the payload is invalid, the response is still `HTTP 200` but carries `data.success: false` with an `errorCode` such as `NOT_SIGNER`, `POLICY_BLOCKED`, `INSUFFICIENT_FUNDS`, or `INVALID_RECIPIENTS`. Write calls are rate-limited to **30 requests per minute per key**.
+
+---
+
+### Cancel a proposal
+
+```
+POST /v1/api/vaults/:vaultId/proposals/:proposalId/cancel
+```
+
+Scope: `proposals:write`
+
+Cancels a **pending** proposal — the same as withdrawing it in the app. The key's creator must be the proposer or a vault admin. Cancelling only sets the proposal's status to `cancelled`; it moves no funds and cannot cancel a proposal that has already been signed and broadcast. Returns the updated proposal.
+
+```bash
+curl -X POST https://relay.sspwallet.com/v1/api/vaults/VAULT_ID/proposals/PROPOSAL_ID/cancel \
+  -H "Authorization: Bearer ssp_live_..."
+```
+
+---
+
+### Create a vault
+
+```
+POST /v1/api/vaults
+```
+
+Scope: `vaults:write` · Requires the **Pro plan or higher**. Creates a new vault in your organization. The key's creator must be an organization **admin or owner**. A vault created here holds no funds until you fund it, and spending always requires its M-of-N device signatures — creating one never moves money. Returns the new vault (same redacted shape as the read API).
+
+```bash
+curl -X POST https://relay.sspwallet.com/v1/api/vaults \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Treasury", "description": "Main treasury vault" }'
+```
+
+### Update a vault
+
+```
+PUT /v1/api/vaults/:vaultId
+```
+
+Scope: `vaults:write`. Updates a vault's configuration (e.g. name, description, tags). Org admin/owner only. Returns the updated vault.
+
+### Vault tags
+
+Reusable tag definitions you can attach to vaults for organization and filtering.
+
+```
+POST   /v1/api/vault-tags          # create  (vaults:write)
+PUT    /v1/api/vault-tags/:tagId   # update  (vaults:write)
+DELETE /v1/api/vault-tags/:tagId   # delete  (vaults:write)
+```
+
+Scope: `vaults:write`. Org admin/owner only. Create takes `{ "name": "...", "description": "...", "color": "..." }` (color optional).
+
+```bash
+curl -X POST https://relay.sspwallet.com/v1/api/vault-tags \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Operations", "description": "Day-to-day operational vaults" }'
+```
+
+---
+
+### Update a vault policy
+
+```
+PUT /v1/api/vaults/:vaultId/policy
+```
+
+Scope: `policies:write` · Requires the **Pro plan or higher**.
+
+Updates the vault's spending policy — transaction/aggregate limits, per-token limits, whitelist mode, time-lock, approval overrides, and other policy sections. A policy is a *control*, not a fund movement: changing it never signs, approves, or broadcasts anything, and existing proposals still require the vault's M-of-N device signatures to execute. The key's creator must be an **admin** of the target vault (org owner/admin, or a vault-level admin); otherwise the call returns `INSUFFICIENT_ROLE`.
+
+The request body contains only the policy sections you want to change; omitted sections are left unchanged. Each section is validated server-side (for example, a vault limit may not be looser than the org default). Returns the updated policy.
+
+```bash
+curl -X PUT https://relay.sspwallet.com/v1/api/vaults/VAULT_ID/policy \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "aggregateLimits": { "perTransaction": { "usd": 5000 } }
+  }'
+```
+
+---
+
+### Policy rules
+
+Policy rules are the programmable, ordered side of a vault's spending policy — each rule matches conditions on a proposal and applies an action (allow, block, require approval, time-lock). This is the "policy-as-code" surface: define your controls in your own systems and push them via the API.
+
+```
+POST   /v1/api/vaults/:vaultId/policy-rules          # create   (policies:write)
+PUT    /v1/api/vaults/:vaultId/policy-rules/:ruleId  # update   (policies:write)
+DELETE /v1/api/vaults/:vaultId/policy-rules/:ruleId  # delete   (policies:write)
+POST   /v1/api/vaults/:vaultId/policy-rules/reorder  # reorder  (policies:write)
+```
+
+Scope: `policies:write` · Requires the **Pro plan or higher**. Rules are a *control*: they gate or route proposals, they never sign or move funds. The key's creator must be an **admin** of the target vault (org owner/admin, or a vault-level admin); otherwise the call returns `INSUFFICIENT_ROLE`. Each rule is validated server-side.
+
+Reorder takes the full ordered list of rule ids: `{ "ruleIds": ["rule_c", "rule_a", "rule_b"] }`.
+
+```bash
+# Create a rule
+curl -X POST https://relay.sspwallet.com/v1/api/vaults/VAULT_ID/policy-rules \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "High-value approval",
+    "conditions": [{ "field": "amountUsd", "operator": "gte", "value": 10000 }],
+    "action": { "type": "require_approval" }
+  }'
+
+# Reorder rules (priority = array order)
+curl -X POST https://relay.sspwallet.com/v1/api/vaults/VAULT_ID/policy-rules/reorder \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "ruleIds": ["RULE_A", "RULE_B"] }'
+```
+
+---
+
+### Vault whitelist
+
+A vault's allowed-destination list and its enforcement mode. The whitelist is a control on **where** funds may go; editing it never signs or moves funds.
+
+```
+PUT    /v1/api/vaults/:vaultId/policy/whitelist/mode  # set mode   (policies:write)
+POST   /v1/api/vaults/:vaultId/policy/whitelist        # add        (policies:write)
+DELETE /v1/api/vaults/:vaultId/policy/whitelist        # remove     (policies:write)
+```
+
+Scope: `policies:write`. The key's creator must be an admin of the target vault. Mode takes `{ "mode": "disabled" | "warn" | "enforce" }`. Add takes `{ "address": "...", "label": "...", "chain": "..." }` (label/chain optional). Remove takes `{ "address": "..." }`. Each returns the updated policy.
+
+```bash
+curl -X POST https://relay.sspwallet.com/v1/api/vaults/VAULT_ID/policy/whitelist \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "address": "0xRECIPIENT", "label": "Treasury", "chain": "eth" }'
+```
+
+---
+
+### Update the organization policy
+
+```
+PUT /v1/api/org/policy
+```
+
+Scope: `policies:write` · Requires the **Pro plan or higher**. Updates the organization-wide default policy that every vault inherits — individual vaults may only make their policy **stricter**, never looser. The key's creator must be an organization **owner or admin**; otherwise the call returns `INSUFFICIENT_ROLE`. Body contains only the sections you want to change; returns the updated org policy.
+
+```bash
+curl -X PUT https://relay.sspwallet.com/v1/api/org/policy \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "aggregateLimits": { "perTransaction": { "usd": 10000 } } }'
+```
+
+---
+
+### Organization policy rules
+
+The org-wide rule set every vault inherits — same shape as vault policy rules, but applied at the organization level.
+
+```
+POST   /v1/api/org/policy-rules          # create   (policies:write)
+PUT    /v1/api/org/policy-rules/:ruleId  # update   (policies:write)
+DELETE /v1/api/org/policy-rules/:ruleId  # delete   (policies:write)
+POST   /v1/api/org/policy-rules/reorder  # reorder  (policies:write)
+```
+
+Scope: `policies:write`. The key's creator must be an organization **owner or admin**. Bodies match the vault policy-rule endpoints; reorder takes `{ "ruleIds": [...] }`.
+
+---
+
+### Organization per-chain policy
+
+A stricter policy override for a specific chain (for example, tighter BTC limits than your org default).
+
+```
+PUT    /v1/api/org/chain-policy/:chain  # set/update  (policies:write)
+DELETE /v1/api/org/chain-policy/:chain  # remove      (policies:write)
+```
+
+Scope: `policies:write`. Org owner/admin only. `:chain` is the chain identifier (e.g. `btc`, `eth`). Returns the updated org policy.
+
+```bash
+curl -X PUT https://relay.sspwallet.com/v1/api/org/chain-policy/btc \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "aggregateLimits": { "perTransaction": { "usd": 2000 } } }'
+```
+
+---
+
+### Approval groups
+
+Named signer quorums (e.g. "Finance — 2 of 3") that policy rules reference to require multi-party approval. Managing a group defines **who** must approve; it never signs or moves funds.
+
+```
+POST   /v1/api/approval-groups            # create  (policies:write)
+PUT    /v1/api/approval-groups/:groupId   # update  (policies:write)
+DELETE /v1/api/approval-groups/:groupId   # delete  (policies:write)
+```
+
+Scope: `policies:write`. The key's creator must be an organization **owner or admin**. Body: `{ "name": "...", "description": "...", "members": ["wkIdentity", ...], "requiredApprovals": 2 }` (description optional). Returns the created/updated group. (Listing groups will arrive with a future `policies:read` scope.)
+
+```bash
+curl -X POST https://relay.sspwallet.com/v1/api/approval-groups \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Finance", "members": ["WK_A", "WK_B", "WK_C"], "requiredApprovals": 2 }'
+```
+
+---
+
+### Apply a policy template
+
+```
+POST /v1/api/vaults/:vaultId/apply-template
+```
+
+Scope: `policies:write` · Requires the **Pro plan or higher**. Materializes a built-in policy template (a curated set of rules, and optionally some flat policy fields) onto a vault in one call. The key's creator must be an **admin** of the vault. Body: `{ "templateId": "..." }`. Returns the created rules and any flat fields applied.
+
+```bash
+curl -X POST https://relay.sspwallet.com/v1/api/vaults/VAULT_ID/apply-template \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "templateId": "tmpl_high_value_approval" }'
+```
+
+---
+
+### Contacts (address book)
+
+Your organization's saved recipient address book. Contacts are a convenience/labelling layer only — they are **not** whitelists and have no effect on policy enforcement or which addresses a proposal may pay. `contacts:read` lists them; `contacts:write` creates, updates, and deletes them.
+
+```
+GET    /v1/api/contacts        # list    (contacts:read)
+POST   /v1/api/contacts        # create  (contacts:write)
+PUT    /v1/api/contacts/:id    # update  (contacts:write)
+DELETE /v1/api/contacts/:id    # delete  (contacts:write)
+```
+
+The list accepts optional `chain`, `search`, `limit`, and `skip` query parameters. Create body: `{ "chain": "btc", "name": "Vendor Inc", "address": "bc1q...", "notes": "optional" }`; update accepts any of `name`, `address`, `notes`.
+
+```bash
+# List
+curl "https://relay.sspwallet.com/v1/api/contacts?chain=btc" \
+  -H "Authorization: Bearer ssp_live_..."
+
+# Create
+curl -X POST https://relay.sspwallet.com/v1/api/contacts \
+  -H "Authorization: Bearer ssp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "chain": "btc", "name": "Vendor Inc", "address": "bc1q..." }'
+```
+
 ## Errors
 
 Errors use the standard SSP envelope, with a machine-readable `name` and a human-readable `message`:
@@ -445,7 +786,7 @@ Errors use the standard SSP envelope, with a machine-readable `name` and a human
 ## Frequently asked
 
 **Can I create or sign a transaction with an API key?**
-No. The API is read-only by construction. Transactions are proposed in the app and signed with your SSP Wallet and SSP Key. No API key can move funds or change any setting.
+A key with the `proposals:write` scope can **create a pending proposal**, but it can never **sign** one. Signing — and therefore actually moving funds — always happens in SSP Wallet + SSP Key with your vault's M-of-N devices. A read-only key can't even create a proposal. So no API key can move funds or change a setting; at most a write key can queue a payment for your signers to approve.
 
 **Can one key read multiple organizations?**
 No. A key is bound to a single organization, derived from the key itself. To read another organization, create a key from inside that organization.

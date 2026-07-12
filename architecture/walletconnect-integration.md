@@ -173,6 +173,41 @@ const result = await connector.sendTransaction({
 - Transaction timeout and retry logic
 - Error handling and user feedback
 
+## Enterprise Vaults (Multi-Party WalletConnect)
+
+The **SSP Enterprise app** brings WalletConnect to shared **M-of-N multisig vaults**,
+not just a single 2-of-2 identity. The difference is governance: a dApp connects to a
+vault's treasury, and every dApp request flows through the vault's normal multi-party
+approval process instead of being signed instantly.
+
+### Connecting a vault to a dApp
+On an EVM vault, choose **Connect dApp** and paste the dApp's WalletConnect URI. The
+vault's smart-account address (an ERC-4337 Account Abstraction account) is exposed to
+the dApp for its own network.
+
+### dApp transactions → proposals
+When a dApp requests `eth_sendTransaction`, the enterprise app turns it into a
+**pending proposal** on the vault. It is not broadcast until it reaches the vault's
+required number of signatures and passes any active spending policies. Because a dApp
+expects a synchronous response, the request is held briefly: if the proposal is
+approved and broadcast while the request is still open, the real transaction hash is
+returned; otherwise the dApp is told the transaction was **submitted for
+multi-signature approval**, and it completes in SSP.
+
+### Message signing → M-of-N ERC-1271 signatures
+`personal_sign` (SIWE logins, Snapshot) and EIP-712 typed data become an
+**asynchronous, multi-party signature request**. Each designated signer co-signs with
+their wallet + key devices; the partial Schnorr signatures are aggregated into a single
+signature that the vault's smart account verifies on-chain via **ERC-1271
+`isValidSignature`**. The message digest is the standard EIP-191 hash (or the canonical
+EIP-712 digest for typed data), so any standard verifier accepts it.
+
+Notes:
+- The vault smart account must be **deployed** (i.e. have made at least one
+  transaction) for ERC-1271 verification to succeed against a counterfactual address.
+- Fund movement always requires the two SSP signing devices; WalletConnect never
+  bypasses the multisig.
+
 ## Security Considerations
 
 ### Best Practices
