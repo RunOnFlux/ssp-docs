@@ -225,8 +225,8 @@ By using SSP Wallet, you agree to the terms outlined in the [SSP Disclaimer](htt
 
 * **Built With:** React 19, TypeScript, Vite
 * **Node Version:** 24+
-* **SSP Wallet Version:** 1.39.1
-* **SSP Key Version:** 1.27.1
+* **SSP Wallet Version:** 1.40.0
+* **SSP Key Version:** 1.28.0
 * **SSP Relay Version:** 1.12.0
 * **Run Development Mode:** `yarn dev`
 

@@ -21,7 +21,7 @@ git clone https://github.com/RunOnFlux/ssp-wallet.git
 cd ssp-wallet
 
 # Optional: Checkout a specific version if needed
-# git checkout v1.39.1
+# git checkout v1.40.0
 
 # Build deterministically using Docker
 npm run build:deterministic
