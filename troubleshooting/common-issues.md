@@ -4,6 +4,24 @@
 
 This guide covers frequently encountered issues with SSP Wallet based on actual user experiences and known technical limitations. All solutions are based on SSP's actual implementation.
 
+## ⬆️ Upgrading to v2.0.0
+
+### Question: "Will updating to v2 make me re-pair or restore my wallet?"
+
+**No.** Updating SSP Wallet or SSP Key to v2.0.0 in place keeps your wallet, password, pairing, settings, and history exactly as they were. You never need to re-pair or restore from seed because of the update. See [What's New in SSP v2.0.0](../whats-new-v2.md).
+
+### Question: "Do I have to update both apps at the same time?"
+
+**No.** Update in any order — SSP Wallet v2 works with SSP Key v1 and vice versa. Multi-chain **batch sync** and the **pairing verification code** activate once both apps are on v2; until then, chains sync one at a time exactly as before.
+
+### Question: "Where did the Settings menu go?"
+
+Settings became the **Menu** tab — the ☰ icon in the bottom bar. Everything from the old menus is there: language, currency, theme, change password, network configuration, WalletConnect, Address Details, SSP Wallet Details, message signing, and the tutorial. See [Navigating SSP Wallet](../getting-started-with-ssp-wallet/navigating-ssp-wallet.md).
+
+### Problem: "The verification words on my two devices don't match"
+
+**Stop — do not use that pairing.** After every sync, both devices derive a 6-word verification code from the synced keys; a mismatch means the sync must not be trusted. Choose **"They don't match"** in the wallet and re-pair. If it repeats, report it. Details: [Pairing Verification Code](../getting-started-with-ssp-key/pairing-verification-code.md).
+
 ## 🔄 Device Synchronization Issues
 
 ### Problem: "Cannot sync SSP Wallet and SSP Key"
@@ -15,10 +33,15 @@ This guide covers frequently encountered issues with SSP Wallet based on actual 
 
 **Solutions:**
 
+#### **One-Tap Sync (both apps on v2)**
+1. **SSP Wallet**: Request the sync (pairing screen or chain activation) — the request is delivered to your paired SSP Key through the relay
+2. **SSP Key**: Review the request and slide to approve — a batch request activates several chains with one approval
+3. **Verify**: Both devices show the same 6-word verification code and the same wallet addresses
+
 #### **QR Code Sync Method**
 1. **SSP Wallet**: Display QR code during sync process
-2. **SSP Key**: Use "Scan to Sync" feature to scan QR code
-3. **Verify**: Both devices show same wallet addresses after sync
+2. **SSP Key**: Use "Scan Code" to scan the QR code
+3. **Verify**: Both devices show the same verification code (v2) and same wallet addresses after sync
 
 #### **Manual Input Method**
 1. **SSP Wallet**: Open the chain's **Sync with SSP Key** view (in SSP Wallet Details) and copy the sync data — it has the form `chain:xpub` (the same value encoded in the sync QR code).

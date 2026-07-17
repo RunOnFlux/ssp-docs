@@ -8,23 +8,33 @@ icon: file-lines
 You may update the language based on your preference
 {% endhint %}
 
+<!-- TODO(v2): replace screenshot -->
+
 <div align="left"><figure><img src="../.gitbook/assets/Screenshot from 2025-01-08 16-31-46.png" alt="" width="316"><figcaption></figcaption></figure></div>
 
 {% hint style="info" %}
-You can change the language before logging in or when using SSP Wallet you can click this icon from your main screen
+You can change the language before logging in, or at any time while using SSP Wallet from the **Menu** tab.
 {% endhint %}
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../.gitbook/assets/image (87).png" alt=""><figcaption></figcaption></figure></div>
 
-Click "Settings"
+Open the **Menu** tab (the ☰ icon in the bottom bar)
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../.gitbook/assets/image (88).png" alt=""><figcaption></figcaption></figure></div>
 
-Choose preferred language from the list
+In the **General** section, choose your preferred language from the list
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../.gitbook/assets/image (89).png" alt="" width="320"><figcaption></figcaption></figure></div>
 
-Click "Save" button
+The change applies immediately
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../.gitbook/assets/image (90).png" alt="" width="320"><figcaption></figcaption></figure></div>
 

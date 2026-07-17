@@ -123,7 +123,13 @@ SSP Wallet                SSP Relay (Optional)       SSP Key
     |    Addresses (BIP48)     |    Addresses (BIP48)    |
     |                         |                         |
     |--- Sync Confirmed ------>|--- Sync Confirmed ----->|
+    |                         |                         |
+    |<-- Show 6-word verification code (derived        -->|
+    |    independently on each device; user confirms      |
+    |    both devices display the same words)             |
 ```
+
+Since v2, a sync request can carry **multiple chains at once** (batch sync) — SSP Key shows one approval naming all chains — and every sync ends with the **pairing verification code**: both devices independently derive the same 6 words from the exchanged keys, so any tampering (even by the relay) is visible to the user.
 
 #### Offline Synchronization (QR Code Only)
 ```
@@ -265,6 +271,6 @@ Based on `/src/storage/blockchains.ts`:
 ## Next Steps
 
 - **[Introduction to 2-of-2 Multisignature](multisig-introduction.md)** - Core security concepts
-- **[BIP48 Key Derivation Explained](bip48-derivation.md)** - Technical key generation details
-- **[Security Architecture Deep Dive](security-architecture.md)** - Comprehensive security analysis
-- **[Communication Protocol](communication-protocol.md)** - Detailed communication flows
+- **[Security Overview](../security/security-overview.md)** - Comprehensive security analysis
+- **[Pairing Verification Code](../getting-started-with-ssp-key/pairing-verification-code.md)** - How synced devices verify each other
+- **[WalletConnect v2 Integration](walletconnect-integration.md)** - dApp communication flows
