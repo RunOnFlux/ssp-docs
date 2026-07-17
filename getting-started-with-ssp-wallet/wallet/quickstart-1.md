@@ -51,9 +51,13 @@ Creating your first SSP Wallet establishes the foundation of your secure 2-of-2 
 
 After installing SSP Wallet you should see the extension icon in your browser toolbar.
 
+<!-- TODO(v2): replace screenshot -->
+
 <div align="left"><figure><img src="../../.gitbook/assets/Screenshot from 2025-01-08 16-25-27.png" alt=""><figcaption></figcaption></figure></div>
 
 **Click the SSP Wallet extension icon** to begin setup.
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left" data-full-width="false"><figure><img src="../../.gitbook/assets/Screenshot from 2025-01-08 16-27-04.png" alt="" width="316"><figcaption></figcaption></figure></div>
 
@@ -66,13 +70,17 @@ SSP Wallet supports **35+ languages**. Select your preferred language from the d
 - Portuguese, Russian, Arabic, Hindi
 - And many more!
 
-💡 **Tip**: You can change language later in Settings → Preferences → Language
+💡 **Tip**: You can change language later in **Menu → Language** (General section)
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/Screenshot from 2025-01-08 16-31-46.png" alt="" width="316"><figcaption></figcaption></figure></div>
 
 ### Step 2: Choose "Create New Wallet"
 
 **Click "Get Started!"** to begin the wallet creation process.
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/Screenshot from 2025-01-08 16-33-22.png" alt="" width="316"><figcaption></figcaption></figure></div>
 
@@ -93,6 +101,8 @@ Your password protects your wallet on this device. Create a strong, unique passw
 ❌ Weak: MySSP#Wallet2024$Secure (predictable patterns)
 ✅ Strong: K9$mX7@pL3*nR8!qZ (random mix of all character types)
 ```
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (212).png" alt="" width="304"><figcaption></figcaption></figure></div>
 
@@ -142,6 +152,8 @@ Your wallet seed phrase is the backup for **Key #1** of your 2-of-2 wallet (the 
 5. **Double-Check Spelling** - every letter matters
 6. **Store Securely** in a safe location
 
+<!-- TODO(v2): replace screenshot -->
+
 <div align="left"><figure><img src="../../.gitbook/assets/image (213).png" alt="" width="304"><figcaption></figcaption></figure></div>
 
 **Seed Phrase Storage Best Practices:**
@@ -165,41 +177,46 @@ Your wallet seed phrase is the backup for **Key #1** of your 2-of-2 wallet (the 
 
 ✅ **Check "I have backed up my wallet seed phrase in a secure location"**
 
+<!-- TODO(v2): replace screenshot -->
+
 <div align="left"><figure><img src="../../.gitbook/assets/image (214).png" alt="" width="375"><figcaption></figcaption></figure></div>
 
 **Click "Confirm"** to proceed to seed phrase verification.
 
-### Step 6: Verify Your Seed Phrase Backup
+### Step 6: Verify Your Seed Phrase Backup (Word Challenge)
 
-To ensure you've backed up your seed phrase correctly, you'll need to confirm specific words.
+To ensure you've backed up your seed phrase correctly, the wallet runs a short **word challenge**.
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/Screenshot from 2025-01-08 17-20-14.png" alt="" width="312"><figcaption></figcaption></figure></div>
 
 **Verification Process:**
-1. **System will ask for specific words** (e.g., "What is the 3rd word?")
-2. **Type the exact word** from your backup
-3. **Spelling must be perfect** - check your written backup
-4. **Complete all verification prompts**
+1. **The wallet asks for specific words** of your phrase (e.g., "Word #2")
+2. **Pick the correct word** from the choices shown — the decoys come from the same word list, so you need your written backup
+3. **Complete all word prompts** — then you'll see "Backup Confirmed!"
 
-⚠️ **If verification fails:**
-- Go back and re-copy your seed phrase
-- Double-check spelling and word order
-- Ensure you have all 24 words written correctly
+⚠️ **If you pick a wrong word:**
+- Check your written backup against the word number requested
+- Go back and re-copy your seed phrase if needed
+- Ensure you have all 24 words written correctly and in order
 
-### Step 7: Complete Wallet Creation
+### Step 7: Make It Yours & Complete Creation
 
-After successful seed phrase verification:
+After the word challenge, the **"Make it yours"** step lets you give your wallet a **name** and an **accent color** so you can spot it at a glance — together with its identicon, these identify the wallet everywhere (including in the switcher and on your SSP Key).
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/Screenshot from 2025-01-08 17-24-49.png" alt="" width="311"><figcaption></figcaption></figure></div>
 
-**Click "Create Wallet"** to finalize your wallet creation.
+**Click "Continue"** to finalize your wallet creation.
 
 ✅ **Wallet Creation Complete!**
 Your SSP Wallet now holds **Key #1** of your 2-of-2 multisignature system.
 
 ### Step 8: Prepare for SSP Key Synchronization
 
-You'll now see a QR code that connects your wallet to SSP Key mobile app.
+Your wallet is ready — pairing your SSP Key is next, to unlock secure sending. You'll see a full-screen pairing step with a QR code that connects your wallet to the SSP Key mobile app.
 
 ## 📱 SSP Key Installation Required
 
@@ -235,40 +252,50 @@ You'll now see a QR code that connects your wallet to SSP Key mobile app.
 
 ### Step 9: Synchronize with SSP Key
 
+**Pick your chains (optional):**
+
+On the pairing screen you can select **additional chains to activate along with Bitcoin** — with SSP Key v2, all of them are activated with **one approval** on your phone. You can always activate more chains later (see [Switch Chain](../switch-chain.md)).
+
 **QR Code Synchronization (Recommended):**
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/Screenshot from 2025-01-08 17-31-26.png" alt="" width="311"><figcaption></figcaption></figure></div>
 
 1. **Keep this QR code displayed** on your computer screen
-2. **Open SSP Key app** on your mobile device
-3. **Tap "Scan to Sync"** in the SSP Key app
+2. **Open SSP Key app** on your mobile device (create your key first — see [Create a New Key](../../getting-started-with-ssp-key/create-a-new-key-and-syncing-to-ssp-wallet.md))
+3. **Tap "Scan Code"** in the SSP Key app
 4. **Point camera at QR code** on your computer
-5. **Wait for successful scan** confirmation
+5. **Approve the synchronisation** on your SSP Key (slide to approve, then confirm with biometrics or password)
+
+The wallet shows a live status timeline while it waits — from *waiting for scan* through *verifying keys*.
 
 **Manual Synchronization (Alternative):**
 
-If QR scanning doesn't work, use manual input:
+If QR scanning doesn't work, use manual input — the sync data always flows from Wallet to Key:
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/Screenshot from 2025-01-08 17-34-09.png" alt="" width="311"><figcaption></figcaption></figure></div>
 
-1. **Click "Manual Input"** on computer
-2. **In SSP Key app**: Go to Settings → Export Public Key
-3. **Copy the Extended Public Key** from mobile
-4. **Paste into computer** manual input field
+1. **Switch to the manual tab** on the wallet's pairing screen and copy the displayed sync data
+2. **In the SSP Key app**: tap **Manual Input** on the sync screen
+3. **Paste the wallet's sync data** into your SSP Key and continue
+4. **Approve the synchronisation** on your SSP Key
 
-### Step 10: Complete Synchronization
+### Step 10: Verify the Pairing (Verification Code)
 
-**After successful scanning/input:**
-
-<div align="left"><figure><img src="../../.gitbook/assets/image (215).png" alt="" width="308"><figcaption></figcaption></figure></div>
-
-**Click "Sync Key"** to complete the synchronization process.
+**After the Key approves**, both devices display the same **6-word verification code**, derived independently by each device from the synced keys.
 
 ⏳ **Synchronization Process** (30-60 seconds):
 1. Devices exchange public keys securely
 2. Multisignature addresses generated
 3. Wallet addresses created and verified
-4. Sync completion confirmation
+4. **Verification code shown on both devices**
+
+**Verify it:** in SSP Key tap **"Scan wallet to verify"** and scan the wallet's verification QR — or compare the 6 words on both screens yourself. If they match, click **"They match — continue"** in the wallet.
+
+🚨 **If the words differ, STOP** — do not use the wallet; choose "They don't match" and re-pair. Matching words prove that no one (not even the relay) tampered with your pairing. Full details: [Pairing Verification Code](../../getting-started-with-ssp-key/pairing-verification-code.md).
 
 ## 🎉 Wallet Creation Complete!
 
@@ -282,10 +309,10 @@ If QR scanning doesn't work, use manual input:
 - 🛡️ **Maximum security activated**
 
 ### 🚀 Next Steps:
-1. **[Your First Transaction](../../quick-start/first-transaction.md)** - Send and receive cryptocurrency
+1. **[Send Your First Transaction](../transaction/send.md)** - Send and receive cryptocurrency
 2. **[Add More Blockchains](../../blockchains/supported-blockchains.md)** - Enable Bitcoin, Ethereum, and more
 3. **[Security Best Practices](../../security/security-overview.md)** - Protect your investment
-4. **[Connect to dApps](../../advanced-features/walletconnect-integration.md)** - Use DeFi and Web3 applications
+4. **[Connect to dApps](../../architecture/walletconnect-integration.md)** - Use DeFi and Web3 applications
 
 ### 💡 Pro Tips for New Users:
 - 🔄 **Test with small amounts** before large transactions

@@ -8,11 +8,15 @@ icon: file-lines
 Exporting transactions enables you to download a copy of your transactions. The file downloaded will have CSV format and can be viewable using any supported application.
 {% endhint %}
 
-From your main screen click "Activity" tab
+Open the "Activity" tab from the bottom bar (the clock icon)
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (25).png" alt="" width="375"><figcaption></figcaption></figure></div>
 
 Scroll down until the bottom of the list and you will find the "Export Transactions" button
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (100).png" alt="" width="314"><figcaption></figcaption></figure></div>
 

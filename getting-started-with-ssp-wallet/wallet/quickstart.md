@@ -4,15 +4,23 @@ icon: file-lines
 
 # Retrieve SSP Wallet Seed Phrase
 
-From your main screen click settings icon
+Open the **Menu** tab (the ☰ icon in the bottom bar)
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (222).png" alt="" width="308"><figcaption></figcaption></figure></div>
 
+<!-- TODO(v2): replace screenshot -->
+
 <div align="left"><figure><img src="../../.gitbook/assets/image (181).png" alt=""><figcaption></figcaption></figure></div>
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (20).png" alt="" width="200"><figcaption></figcaption></figure></div>
 
 Click "SSP Wallet Details"
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (183).png" alt="" width="308"><figcaption></figcaption></figure></div>
 
@@ -20,9 +28,13 @@ Input your password on "Confirm with Password" text box, then click "Grant Acces
 
 Scroll down at the bottom until "SSP Wallet Mnemonic Seed Phrase"
 
+<!-- TODO(v2): replace screenshot -->
+
 <div align="left"><figure><img src="../../.gitbook/assets/image (184).png" alt="" width="308"><figcaption></figcaption></figure></div>
 
 Click unhide icon
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (185).png" alt=""><figcaption></figcaption></figure></div>
 

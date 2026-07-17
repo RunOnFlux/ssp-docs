@@ -4,17 +4,29 @@ icon: file-lines
 
 # Retrieving Your Wallet Address
 
-From the main screen of your SSP Wallet, click settings icon
+In your SSP Wallet, open the **Menu** tab (the ☰ icon in the bottom bar)
+
+{% hint style="info" %}
+Tip: your address is also one tap away on Home — the **Receive** button shows the active wallet's address and QR code.
+{% endhint %}
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (225).png" alt="" width="308"><figcaption></figcaption></figure></div>
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (174).png" alt=""><figcaption></figcaption></figure></div>
 
 
 
+<!-- TODO(v2): replace screenshot -->
+
 <div align="left"><figure><img src="../../.gitbook/assets/image (18).png" alt="" width="208"><figcaption></figcaption></figure></div>
 
 Click "Address Details"
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../../.gitbook/assets/image (177).png" alt="" width="302"><figcaption></figcaption></figure></div>
 
