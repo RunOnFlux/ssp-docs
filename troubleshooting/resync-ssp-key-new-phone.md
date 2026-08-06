@@ -33,7 +33,7 @@ Three things make a new-phone re-sync safe and simple:
 * **Re-pairing only re-shares public data.** The handshake exchanges public keys (never seed phrases or private keys) so the new phone can rebuild the same multisig and sign again.
 
 {% hint style="warning" %}
-Because the wallet already has your key on file, it **will not pop up a sync prompt by itself** after you restore the phone. You re-share the sync QR manually from the wallet's settings — see Step 2. This is expected, not a sign that something is wrong.
+Because the wallet already has your key on file, it **will not pop up a sync prompt by itself** after you restore the phone. You re-share the sync QR manually from the wallet's Menu tab — see Step 2. This is expected, not a sign that something is wrong.
 {% endhint %}
 
 ## Step 1 — Install and restore SSP Key on the new phone
@@ -58,11 +58,12 @@ For the full screenshot-by-screenshot version of this restore flow, see [Restore
 This first pairing restores your core identity and your Bitcoin chain.
 
 1. On your computer, open the **SSP Wallet** browser extension and **unlock** it with your wallet password.
-2. Open the menu (top-right) and click **SSP Wallet Details**.
+2. Open the **Menu** tab (the ☰ icon in the bottom bar) and click **SSP Wallet Details**.
 3. In **Confirm with Password**, enter your wallet password and click **Grant Access**.
 4. Scroll to the **SSP Sync with SSP Key** section and click the **eye / unhide icon** to reveal its **QR code**. (This section also syncs your Bitcoin chain automatically.)
 5. On the new phone, in the **Synchronisation Needed** prompt, tap **Scan Code** and scan the QR shown in the wallet. (Grant camera permission if asked.)
-6. SSP Key shows a **Synchronisation Request** — tap **Approve Synchronisation**, then confirm with your key password or biometrics.
+6. SSP Key shows a **Synchronisation Request** — **slide to approve**, then confirm with your key password or biometrics.
+7. Both devices then display the same **6-word verification code** — scan the wallet's verification QR with the Key (**Scan wallet to verify**) or compare the words. **They must match**; if they differ, stop and re-pair. See [Pairing Verification Code](../getting-started-with-ssp-key/pairing-verification-code.md).
 
 {% hint style="info" %}
 **Can't scan the QR?** In SSP Key tap **Manual Input** instead and paste the wallet's extended public key. Make sure both the phone and the extension have an internet connection — re-pairing is coordinated through the SSP Relay.
@@ -76,11 +77,12 @@ This first pairing restores your core identity and your Bitcoin chain.
 
 For **each** additional chain you use:
 
-1. In SSP Wallet, switch the **active chain** (chain selector) to that chain.
-2. Open the menu → **SSP Wallet Details** again, and reveal the **`<chain>` Sync with SSP Key** section to show that chain's QR code.
-3. On the phone, tap **Scan Code**, scan it, and tap **Approve Synchronisation**.
+1. In SSP Wallet, switch the **active chain** (tap the wallet & chain pill and pick the chain in the Networks section).
+2. With both apps on v2, the wallet can send a **one-tap Chain Activation Request** straight to the phone — review and slide to approve on the Key. Otherwise, open **Menu → SSP Wallet Details** and reveal the **`<chain>` Sync with SSP Key** section to show that chain's QR code.
+3. If using the QR: on the phone, tap **Scan Code**, scan it, and slide to approve.
+4. Compare the **verification code** shown on both devices after each sync.
 
-Repeat until every chain you actively use has been scanned and approved.
+Repeat until every chain you actively use has been re-synced and approved.
 
 ## Step 4 — Verify everything matches
 

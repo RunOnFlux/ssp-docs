@@ -27,6 +27,10 @@ layout:
 
 ### Secure. Simple. Powerful.
 
+{% hint style="success" %}
+**SSP v2.0.0 is here** — a complete redesign of SSP Wallet and SSP Key with multi-chain batch sync, the pairing verification code, a Portfolio tab, unified Send, privacy mode, slide-to-approve and more. Updating in place keeps everything as it was. See [What's New in SSP v2.0.0](whats-new-v2.md).
+{% endhint %}
+
 Visit us at:
 
 * [SSP Wallet](https://sspwallet.io)
@@ -84,6 +88,7 @@ This design ensures that **both devices are required** to authorize any transact
    * SSP Wallet validates the received address, ensuring integrity.
 3. **Validation and Confirmation:**
    * Both SSP Wallet and SSP Key confirm matching derived addresses to finalize synchronization.
+   * Since v2, multiple chains can be synchronized in one batch with a single approval on SSP Key, and both devices display a matching **6-word verification code** derived independently from the synced keys — an out-of-band check that no party (including the relay) tampered with the exchange.
 
 **Transaction Signing:**
 
@@ -225,8 +230,8 @@ By using SSP Wallet, you agree to the terms outlined in the [SSP Disclaimer](htt
 
 * **Built With:** React 19, TypeScript, Vite
 * **Node Version:** 24+
-* **SSP Wallet Version:** 1.40.0
-* **SSP Key Version:** 1.28.0
+* **SSP Wallet Version:** 2.0.0
+* **SSP Key Version:** 2.0.0
 * **SSP Relay Version:** 1.12.0
 * **Run Development Mode:** `yarn dev`
 

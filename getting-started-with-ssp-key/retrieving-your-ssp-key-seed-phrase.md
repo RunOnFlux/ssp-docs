@@ -4,13 +4,19 @@ icon: file-lines
 
 # Retrieving Your SSP Key Seed Phrase
 
+<!-- TODO(v2): replace screenshot -->
+
 <div align="left"><figure><img src="../.gitbook/assets/image (76).png" alt="" width="284"><figcaption></figcaption></figure></div>
 
-From your main screen click settings icon
+From your main screen open the menu (icon in the top bar)
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../.gitbook/assets/image (75).png" alt="" width="284"><figcaption></figcaption></figure></div>
 
 Click "SSP Key Details"
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../.gitbook/assets/image (77).png" alt="" width="284"><figcaption></figcaption></figure></div>
 
@@ -20,9 +26,13 @@ You can also use the fingerprint scanner or face recognition of your device
 
 Click "Grant Access" button
 
+<!-- TODO(v2): replace screenshot -->
+
 <div align="left"><figure><img src="../.gitbook/assets/image (78).png" alt="" width="284"><figcaption></figcaption></figure></div>
 
 In SSP Key Mnemonic Seed Phrase click unhide button
+
+<!-- TODO(v2): replace screenshot -->
 
 <div align="left"><figure><img src="../.gitbook/assets/image (79).png" alt=""><figcaption></figcaption></figure></div>
 

@@ -16,14 +16,14 @@ Use WalletConnect if you already speak EIP-1193. Use `window.ssp` if you want SS
 ## 🏗️ SSP Development Stack
 
 ```typescript
-// SSP Wallet Browser Extension (Current: v1.40.0)
+// SSP Wallet Browser Extension (Current: v2.0.0)
 React 19 + TypeScript + Vite
 Manifest v3 Web Extension (Chrome 110+, Firefox 110+, Edge)
 BIP48 HD Key Derivation (@scure/bip32, @scure/bip39)
 Schnorr Multisig (@runonflux/aa-schnorr-multisig-sdk) for EVM ERC-4337
 Injected global: window.ssp  (request/response only — no events)
 
-// SSP Key Mobile App (Current: v1.28.0)
+// SSP Key Mobile App (Current: v2.0.0)
 React Native + TypeScript, iOS 15.1+ / Android 7+
 Package: io.runonflux.sspkey
 

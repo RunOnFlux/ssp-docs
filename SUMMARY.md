@@ -1,6 +1,7 @@
 # Table of contents
 
 * [Welcome to SSP Wallet](README.md)
+* [What's New in SSP v2.0.0](whats-new-v2.md)
 
 ## 🏗️ SSP Ecosystem Architecture
 
@@ -22,6 +23,8 @@
 
 ## 💼 Getting Started with SSP Wallet
 
+* [Navigating SSP Wallet](getting-started-with-ssp-wallet/navigating-ssp-wallet.md)
+* [Portfolio & Activity](getting-started-with-ssp-wallet/portfolio-and-activity.md)
 * [Change Language](getting-started-with-ssp-wallet/quickstart.md)
 * [Switch Chain](getting-started-with-ssp-wallet/switch-chain.md)
 * [Wallet](getting-started-with-ssp-wallet/wallet/README.md)
@@ -57,6 +60,9 @@
 * [Restore Key Using Seed Phrase and Syncing to SSP Wallet](getting-started-with-ssp-key/restore-key-using-seed-phrase-and-syncing-to-ssp-wallet.md)
 * [Retrieving Your SSP Key Seed Phrase](getting-started-with-ssp-key/retrieving-your-ssp-key-seed-phrase.md)
 * [Using Your SSP Key For Syncing](getting-started-with-ssp-key/using-your-ssp-key-for-syncing.md)
+* [Pairing Verification Code](getting-started-with-ssp-key/pairing-verification-code.md)
+* [Approving Requests with SSP Key](getting-started-with-ssp-key/approving-requests-with-ssp-key.md)
+* [Signing History & Privacy Mode](getting-started-with-ssp-key/signing-history-and-privacy-mode.md)
 
 ## ⚡ Advanced Features
 
