@@ -49,7 +49,7 @@ graph TB
 - **Architecture**: Manifest v3 browser extension
 
 #### Core Responsibilities:
-- 👤 User interface for all wallet operations across 12+ blockchains
+- 👤 User interface for all wallet operations across 13+ blockchains
 - 🔑 Generate and securely store first BIP48-derived private key
 - 💸 Construct transactions for UTXO and EVM networks
 - 🔄 Coordinate with SSP Key for transaction approval

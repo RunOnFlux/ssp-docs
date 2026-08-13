@@ -19,7 +19,7 @@ This guide is for teams currently using Safe (formerly Gnosis Safe) who want to 
 | Aspect | Safe | SSP Enterprise |
 |---|---|---|
 | **Custody model** | Self-custody multisig (smart contract) | Self-custody multisig (native + smart contract) |
-| **Chain coverage** | EVM only (~10 chains) | EVM + UTXO (12+ chains across both) |
+| **Chain coverage** | EVM only (~10 chains) | EVM + UTXO + Solana (13+ chains) |
 | **Signer security** | Whatever wallet each signer uses | Two-device per signer (enforced) |
 | **Policies** | Modules/Guards (Solidity) | Built-in policy engine (UI configured) |
 | **Member management** | Ethereum addresses | Named members + roles |
