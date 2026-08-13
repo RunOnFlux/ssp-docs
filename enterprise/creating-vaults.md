@@ -46,9 +46,9 @@ Subtitle: *Choose the blockchain network for this vault.*
 
 You'll see a grid of supported chains:
 
-**Mainnet:** Bitcoin, Ethereum, Litecoin, Dogecoin, Flux, Bitcoin Cash, Zcash, Ravencoin, BNB Smart Chain, Avalanche, Polygon, Base.
+**Mainnet:** Bitcoin, Ethereum, Litecoin, Dogecoin, Flux, Bitcoin Cash, Zcash, Ravencoin, BNB Smart Chain, Avalanche, Polygon, Base, Solana.
 
-**Testnet:** Bitcoin Testnet, Bitcoin Signet, Sepolia (Ethereum testnet), Amoy (Polygon testnet), Flux Testnet — useful for trying things out without real funds.
+**Testnet:** Bitcoin Testnet, Bitcoin Signet, Sepolia (Ethereum testnet), Amoy (Polygon testnet), Flux Testnet, Solana Devnet — useful for trying things out without real funds.
 
 Click a chain card to select it (it highlights in blue), then click **Next →**.
 

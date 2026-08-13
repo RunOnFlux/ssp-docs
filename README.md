@@ -150,7 +150,7 @@ SSP Wallet supports **WalletConnect v2** (now **Reown**), enabling seamless inte
 
 ### Supported Blockchains
 
-SSP Wallet supports **12 mainnet blockchain networks** (plus testnets) with native multisignature security:
+SSP Wallet supports **13 mainnet blockchain networks** (plus testnets) with native multisignature security:
 
 #### UTXO Networks (Native Multisignature)
 
@@ -173,10 +173,15 @@ SSP Wallet supports **12 mainnet blockchain networks** (plus testnets) with nati
 * **Avalanche (AVAX)** - Fast finality, growing ecosystem
 * **Base (ETH on Base)** - Coinbase Layer 2, consumer apps
 
+#### Solana Network (Self-Initiating On-Chain Multisig)
+
+* **Solana (SOL)** - SSP's own multisig program; funds live in a Program-Derived Address vault, with SPL token support
+
 #### Testnet Networks
 
 * **Sepolia** - Ethereum testnet
 * **Amoy** - Polygon testnet
+* **Solana Devnet** - Solana testing network
 
 Each network maintains SSP's **2-of-2 multisignature security** while leveraging blockchain-specific optimizations and features.
 

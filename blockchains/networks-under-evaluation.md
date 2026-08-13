@@ -6,8 +6,10 @@ SSP Wallet continuously evaluates new blockchain networks for integration, focus
 
 The following networks are actively being researched and evaluated for future SSP Wallet support:
 
-### 🌐 Solana (SOL) — Implemented (Devnet)
-**Status**: Live on **devnet**; mainnet pending a security audit. Solana has graduated from evaluation to a working integration.
+### 🌐 Solana (SOL) — Live on Mainnet
+**Status**: Live on **mainnet** (program `SSPWVu7dtTDkZYmDx73StqV46PioSmdiNE7igpjHK1r`) and **devnet** (program `CisPSFTQoTnEqn5cUi1pgpfPp2xiTVRkK7eD5jBevxdX`). Solana has graduated from evaluation to a shipped integration.
+
+The two clusters run **separate deployments of the same program**, each with its own keypair and upgrade authority, so the program IDs deliberately differ. The mainnet build is reproducible and verified against the public source with `solana-verify`.
 
 Solana uses **SSP's own self-initiating multisig program** — **not** Squads, and with no separate bootloader. The multisig account is a Program-Derived Address deterministically derived from `sha256(sorted_members) + threshold`, so registration is permissionless and spends are gated purely by the threshold check (Bitcoin-P2WSH-style).
 
@@ -16,6 +18,7 @@ Solana uses **SSP's own self-initiating multisig program** — **not** Squads, a
 - **Front-running resistance**: The config is bound to the member/threshold hash.
 - **Immutable configuration**: Members and threshold are fixed at creation (to "rotate," migrate funds to a new multisig).
 - **PDA vault model**: A separate SystemProgram-owned vault holds funds; the program authorizes spends via `invoke_signed`.
+- **Verifiable builds**: The deployed mainnet bytecode is reproducible from source and independently checkable with `solana-verify verify-from-repo`.
 
 See [Supported Blockchains](supported-blockchains.md) for live integration details.
 

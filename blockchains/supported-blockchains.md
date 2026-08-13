@@ -2,11 +2,12 @@
 
 ## Multi-Chain Architecture
 
-SSP Wallet supports **12 mainnet blockchain networks** (plus testnets and a Solana devnet) with true multisignature capabilities across UTXO and EVM-compatible blockchains. Each network uses the optimal implementation:
+SSP Wallet supports **13 mainnet blockchain networks** (plus testnets and Solana devnet) with true multisignature capabilities across UTXO, EVM-compatible and Solana blockchains. Each network uses the optimal implementation:
 
 - **UTXO Networks**: Native P2SH/P2WSH multisignature addresses
 - **EVM Networks**: ERC-4337 smart-contract accounts (CREATE2-derived), controlled by a 2-of-2 Schnorr multisig — not EOAs
 - **Account Abstraction**: The native and only EVM mode; every EVM address is an ERC-4337 smart account signed by both keys
+- **Solana**: SSP's own self-initiating on-chain multisig program; funds live in a Program-Derived Address vault
 
 All networks maintain the same **2-of-2 multisignature security model** using BIP48 key derivation.
 
@@ -192,6 +193,25 @@ const eth = {
   - Account Abstraction support
 
 
+### Solana Network
+
+#### Solana (SOL)
+- **Network**: Solana Mainnet Beta
+- **Address Type**: Program-Derived Address (PDA) vault, owned by SystemProgram
+- **Multisig Program**: `SSPWVu7dtTDkZYmDx73StqV46PioSmdiNE7igpjHK1r`
+- **Derivation**: The multisig PDA is derived from `sha256(sorted_members) + threshold`, so its address is knowable — and fundable — before any on-chain action
+- **Features**:
+  - SSP's own self-initiating multisig program (not Squads)
+  - Permissionless registration; spends gated purely by the M-of-N threshold check
+  - Immutable member set and threshold (migrate funds to rotate)
+  - SPL token support, including USDC
+  - Reproducible builds verifiable against the public source via `solana-verify`
+
+> Devnet runs a **separate deployment** of the same program
+> (`CisPSFTQoTnEqn5cUi1pgpfPp2xiTVRkK7eD5jBevxdX`) under its own keypair and
+> upgrade authority. The program IDs differ by design — a vault address is
+> derived from the program ID, so the two clusters never share addresses.
+
 ### Testnets
 
 The following testnets are available:
@@ -201,6 +221,7 @@ The following testnets are available:
 - **Bitcoin Testnet** - Bitcoin testing network
 - **Bitcoin Signet** - Controlled Bitcoin test network
 - **Flux Testnet** - Flux testing network
+- **Solana Devnet** - Solana testing network
 
 ## 🔧 Network-Specific Features
 
@@ -323,11 +344,13 @@ await sspProvider.request({
 - **Avalanche**: [snowtrace.io](https://snowtrace.io)
 - **Base**: [basescan.org](https://basescan.org)
 - **Flux**: [explorer.runonflux.io](https://explorer.runonflux.io)
+- **Solana**: [explorer.solana.com](https://explorer.solana.com)
 
 ### Testnet Explorers
 - **Bitcoin Testnet**: [mempool.space/testnet](https://mempool.space/testnet)
 - **Sepolia**: [sepolia.etherscan.io](https://sepolia.etherscan.io)
 - **Amoy**: [amoy.polygonscan.com](https://amoy.polygonscan.com)
+- **Solana Devnet**: [explorer.solana.com?cluster=devnet](https://explorer.solana.com?cluster=devnet)
 
 ## 🛠️ Development & Testing
 
