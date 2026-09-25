@@ -2,7 +2,7 @@
 
 ## Multi-Chain Architecture
 
-SSP Wallet supports **13 mainnet blockchain networks** (plus testnets and Solana devnet) with true multisignature capabilities across UTXO, EVM-compatible and Solana blockchains. Each network uses the optimal implementation:
+SSP Wallet supports **14 mainnet blockchain networks** (plus testnets and Solana devnet) with true multisignature capabilities across UTXO, EVM-compatible and Solana blockchains. Each network uses the optimal implementation:
 
 - **UTXO Networks**: Native P2SH/P2WSH multisignature addresses
 - **EVM Networks**: ERC-4337 smart-contract accounts (CREATE2-derived), controlled by a 2-of-2 Schnorr multisig — not EOAs
@@ -114,6 +114,18 @@ const btc = {
 - **Features**:
   - CashAddr address format (`bitcoincash:` prefix)
   - Low fees and fast confirmations
+
+#### Kaspa (KAS)
+- **Network**: Kaspa Mainnet
+- **Address Type**: P2SH multisignature (`kaspa:p…` addresses)
+- **Script Type**: `p2sh`
+- **Derivation Path**: `m/48'/111111'/0'/0'/0/0`
+- **Multisig**: 2-of-2 over the sorted x-only (32-byte) Schnorr keys of SSP Wallet and SSP Key: `OP_2 <key> <key> OP_2 OP_CHECKMULTISIG`, hashed with BLAKE2b into the P2SH script
+- **Features**:
+  - Blocks every ~100 ms; transactions are confirmed once accepted by the virtual chain, usually within a few seconds
+  - Fees are based on transaction *mass* (sompi per gram), including KIP-9 storage mass, which makes very small change outputs expensive — SSP folds tiny change into the fee instead of creating it
+  - The transaction ID is known before signing, so both devices can show and track it from the start
+  - Built and signed with [`@runonflux/kaspa-core`](https://github.com/RunOnFlux/kaspa-core), an open-source, audited pure-TypeScript library verified against the reference node
 
 ### Ethereum-Compatible (EVM) Networks
 
@@ -345,6 +357,7 @@ await sspProvider.request({
 - **Base**: [basescan.org](https://basescan.org)
 - **Flux**: [explorer.runonflux.io](https://explorer.runonflux.io)
 - **Solana**: [explorer.solana.com](https://explorer.solana.com)
+- **Kaspa**: [explorer.kaspa.org](https://explorer.kaspa.org)
 
 ### Testnet Explorers
 - **Bitcoin Testnet**: [mempool.space/testnet](https://mempool.space/testnet)
