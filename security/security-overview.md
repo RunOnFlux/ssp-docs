@@ -230,7 +230,7 @@ SSP has undergone comprehensive security audits by [**Halborn Security**](https:
 ### Cryptographic Specifications
 - **Encryption**: AES-256-GCM with random IVs
 - **Key Derivation**: PBKDF2 with 100,000+ iterations
-- **Signatures**: ECDSA (Bitcoin and other UTXO chains), Schnorr multisig (EVM/Ethereum via ERC-4337 Account Abstraction), ed25519 (Solana)
+- **Signatures**: ECDSA (Bitcoin and other UTXO chains), BIP-340 Schnorr (Kaspa P2SH multisig), Schnorr multisig (EVM/Ethereum via ERC-4337 Account Abstraction), ed25519 (Solana)
 - **Hashing**: SHA-256 for Bitcoin, Keccak-256 for Ethereum
 - **HD Wallets**: BIP48 derivation for multisignature wallets
 

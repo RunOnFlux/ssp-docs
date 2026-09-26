@@ -160,6 +160,7 @@ SSP Wallet supports **13 mainnet blockchain networks** (plus testnets) with nati
 * **Litecoin (LTC)** - P2WSH native segwit multisignature
 * **Dogecoin (DOGE)** - P2SH multisignature
 * **Bitcoin Cash (BCH)** - P2SH multisignature
+* **Kaspa (KAS)** - P2SH multisignature over x-only Schnorr keys (`kaspa:p…`)
 * **Ravencoin (RVN)** - P2SH multisignature with asset support
 * **Zcash (ZEC)** - P2SH multisignature (transparent addresses)
 * **Flux (FLUX)** - P2SH multisignature with cloud integration
