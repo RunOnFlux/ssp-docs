@@ -123,7 +123,23 @@ m/48'/cointype'/account'/script_type'/change/index
     ↓
 Example Bitcoin: m/48'/0'/0'/2'/0/0
 Example Ethereum: m/48'/60'/0'/0'/0/0
+Example TRON: m/48'/195'/0'/0'/0/0
 ```
+
+| Chain | Coin type | Script type | Example path | Signature scheme |
+|-------|-----------|-------------|--------------|------------------|
+| **Bitcoin** | `0'` | `2'` (P2WSH) | `m/48'/0'/0'/2'/0/0` | ECDSA, native 2-of-2 multisig |
+| **Litecoin** | `2'` | `2'` (P2WSH) | `m/48'/2'/0'/2'/0/0` | ECDSA, native 2-of-2 multisig |
+| **Dogecoin** | `3'` | `0'` (P2SH) | `m/48'/3'/0'/0'/0/0` | ECDSA, native 2-of-2 multisig |
+| **Zcash** | `133'` | `0'` (P2SH) | `m/48'/133'/0'/0'/0/0` | ECDSA, native 2-of-2 multisig |
+| **Bitcoin Cash** | `145'` | `0'` (P2SH) | `m/48'/145'/0'/0'/0/0` | ECDSA, native 2-of-2 multisig |
+| **Ravencoin** | `175'` | `0'` (P2SH) | `m/48'/175'/0'/0'/0/0` | ECDSA, native 2-of-2 multisig |
+| **Flux** | `19167'` | `0'` (P2SH) | `m/48'/19167'/0'/0'/0/0` | ECDSA, native 2-of-2 multisig |
+| **Kaspa** | `111111'` | `0'` (P2SH) | `m/48'/111111'/0'/0'/0/0` | BIP-340 Schnorr, native 2-of-2 multisig |
+| **Ethereum** | `60'` | `0'` | `m/48'/60'/0'/0'/0/0` | Schnorr multisig, ERC-4337 smart account |
+| **TRON** | `195'` | `0'` | `m/48'/195'/0'/0'/0/0` | secp256k1 ECDSA over TIP-712 typed data, contract vault |
+
+On TRON, each device's key at this path becomes a TRON address, and the vault is the CREATE2 contract address of the two sorted addresses and the threshold. SSP Enterprise vaults use the organization's index as the account level and the vault's index as the next-to-last level.
 
 ## 🛡️ Attack Resistance
 
@@ -138,12 +154,40 @@ Example Ethereum: m/48'/60'/0'/0'/0/0
 ✅ **Supply Chain Attacks**: LavaMoat compartmentalization and policies
 ✅ **Code Injection**: SES lockdown blocks eval and dynamic code execution
 ✅ **Prototype Pollution**: Immutable prototypes prevent tampering
+✅ **Address Poisoning (TRON)**: Spoofed transfers hidden, lookalike-resistant address display, first-time recipient confirmation
 
 ### Potential Risks (Mitigated)
 ⚠️ **Both Device Loss**: Mitigated by seed phrase backup
 ⚠️ **User Error**: Mitigated by clear UI and confirmation steps
 ⚠️ **Physical Attack**: Mitigated by password protection
 ⚠️ **Compromised Dependencies**: Mitigated by LavaMoat runtime protection  
+
+## ⚡ TRON Vault Security
+
+A TRON vault is a smart contract, so SSP adds checks on both devices on top of the 2-of-2 signature. Every vault operation is signed as TIP-712 typed data that binds the vault address and the TRON chain ID, so a signature can't be replayed on another vault or on the Nile testnet, and each operation's one-time number can execute only once.
+
+### What SSP Key checks before co-signing
+- **Derive, never trust**: SSP Wallet and SSP Key each derive the vault address, signer list and threshold from their own keys and the keys exchanged at pairing, and reject any request that disagrees.
+- **Never signs an opaque hash**: SSP Key receives the whole operation, recomputes its digest itself and displays everything it decodes (each recipient, amount and token, plus the fee and its token) before signing.
+- **Transfers only**: an SSP Wallet operation may contain only TRX, TRC-20 and TRC-10 transfers. Token approvals, calls to unknown contracts and calls to the vault itself are refused, and an operation the key can't decode is refused rather than shown partially.
+- **Fee checks**: the fee must go to SSP's published fee address, in TRX or USDT, under a hard ceiling (30 TRX or 8 USDT), or be zero when you pay the network fee yourself.
+- **Short validity**: an operation signed in SSP Wallet expires within 2 hours (30 minutes by default).
+- **No account-permission changes**: SSP never signs a TRON `AccountPermissionUpdate` transaction, the transaction behind TRON's most common account-takeover scam.
+
+### Address-poisoning protections
+TRON is a major target of address poisoning: lookalike addresses and fake transfers are planted in your history so that you later copy the wrong address. SSP:
+- hides zero-value token transfers;
+- shows tokens that aren't on SSP's list only after you import them;
+- hides "outgoing" token transfers that the vault never actually executed, a known spoofing trick;
+- highlights the middle characters of addresses, not only the start and end that lookalikes imitate;
+- asks you to confirm the first time you send to a new recipient.
+
+### USDT blacklist checks
+Tether can freeze USDT held at any TRON address. Before every USDT send, SSP checks both the vault and the recipient against the USDT blacklist:
+- a send **to a blacklisted recipient is blocked**, because USDT sent there would be frozen;
+- if the vault itself has been blacklisted, SSP shows a banner explaining why its USDT can't move.
+
+Funds in a TRON vault never depend on SSP's servers: see [Moving TRON Vault Funds Without SSP](../blockchains/tron-without-ssp.md).
 
 ## 🔍 Security Audits
 
@@ -167,6 +211,10 @@ SSP has undergone comprehensive security audits by [**Halborn Security**](https:
 - **Focus**: Developer integration security and cryptographic implementation
 - **Result**: SDK security practices validated
 - **[View Public Report](https://www.halborn.com/audits/influx-technologies/account-abstraction-schnorr-signatures-sdk)**
+
+> The audits above predate TRON support and do not cover the TRON vault
+> contracts or SDK, which are open source at
+> [RunOnFlux/tron-multisig](https://github.com/RunOnFlux/tron-multisig).
 
 ## 🚨 Security Best Practices for Users
 
@@ -230,8 +278,8 @@ SSP has undergone comprehensive security audits by [**Halborn Security**](https:
 ### Cryptographic Specifications
 - **Encryption**: AES-256-GCM with random IVs
 - **Key Derivation**: PBKDF2 with 100,000+ iterations
-- **Signatures**: ECDSA (Bitcoin and other UTXO chains), BIP-340 Schnorr (Kaspa P2SH multisig), Schnorr multisig (EVM/Ethereum via ERC-4337 Account Abstraction), ed25519 (Solana)
-- **Hashing**: SHA-256 for Bitcoin, Keccak-256 for Ethereum
+- **Signatures**: ECDSA (Bitcoin and other UTXO chains), BIP-340 Schnorr (Kaspa P2SH multisig), Schnorr multisig (EVM/Ethereum via ERC-4337 Account Abstraction), ed25519 (Solana), secp256k1 ECDSA over TIP-712 typed data (TRON contract vaults)
+- **Hashing**: SHA-256 for Bitcoin, Keccak-256 for Ethereum and TRON
 - **HD Wallets**: BIP48 derivation for multisignature wallets
 
 ### Security Architecture

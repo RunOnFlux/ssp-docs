@@ -2,12 +2,13 @@
 
 ## Multi-Chain Architecture
 
-SSP Wallet supports **14 mainnet blockchain networks** (plus testnets and Solana devnet) with true multisignature capabilities across UTXO, EVM-compatible and Solana blockchains. Each network uses the optimal implementation:
+SSP Wallet supports **15 mainnet blockchain networks** (plus testnets, Solana devnet and TRON Nile) with true multisignature capabilities across UTXO, EVM-compatible, Solana and TRON blockchains. Each network uses the optimal implementation:
 
 - **UTXO Networks**: Native P2SH/P2WSH multisignature addresses
 - **EVM Networks**: ERC-4337 smart-contract accounts (CREATE2-derived), controlled by a 2-of-2 Schnorr multisig — not EOAs
 - **Account Abstraction**: The native and only EVM mode; every EVM address is an ERC-4337 smart account signed by both keys
 - **Solana**: SSP's own self-initiating on-chain multisig program; funds live in a Program-Derived Address vault
+- **TRON**: SSP's own smart-contract vault at a CREATE2 address computed from the members' keys and threshold — no creator, no admin, immutable; network fees sponsored by SSP
 
 All networks maintain the same **2-of-2 multisignature security model** using BIP48 key derivation.
 
@@ -224,6 +225,54 @@ const eth = {
 > upgrade authority. The program IDs differ by design — a vault address is
 > derived from the program ID, so the two clusters never share addresses.
 
+### TRON Network
+
+#### TRON (TRX)
+- **Network**: TRON Mainnet
+- **Assets**: TRX and TRC-20 tokens, including USDT (`TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t`)
+- **Address Type**: Smart-contract vault (`T…`, 34 characters) at a CREATE2 address computed from the members' keys and the threshold
+- **Derivation Path**: `m/48'/195'/0'/0'/0/0` — SSP Wallet and SSP Key each derive their own secp256k1 key at this path; the two resulting TRON addresses, sorted, plus the threshold (2) define the vault
+- **Multisig**: 2-of-2 in SSP Wallet; M-of-N (up to 40 keys) for [SSP Enterprise](../enterprise/creating-vaults.md) vaults. Each key signs the operation's TIP-712 typed-data digest with secp256k1 ECDSA, independently and in any order
+- **Contracts**: vault factory, vault implementation and fee sponsor addresses are published at launch
+- **Features**:
+  - No creator, no admin key and no upgrade path: the vault contract is immutable, and only M of its members can move funds
+  - Receives TRX, TRC-10 and TRC-20 tokens **before first use** — the address works from the moment SSP shows it, with no setup transaction
+  - Deployed automatically inside your first send
+  - Network fee sponsored by SSP and paid by the vault in the same transaction: SSP covers the TRON energy and bandwidth, and the vault pays a fee that both keys sign as part of the transaction — in **TRX by default**, or in **USDT if the vault holds no TRX**
+  - One transaction can pay **up to 16 recipients**; the fee is charged once per transaction, not once per recipient
+  - Never depends on SSP to move funds: anyone holding a fully signed operation can submit it from any funded TRON account — see [Moving TRON Vault Funds Without SSP](tron-without-ssp.md)
+  - Built on [`@runonflux/tron-multisig`](https://github.com/RunOnFlux/tron-multisig): open-source contracts and a pure-TypeScript SDK
+
+> **Tip: keep some TRX in the vault.** While the vault holds TRX, the network
+> fee is paid in TRX, which is cheaper than paying it in USDT. Around 20 TRX
+> covers a few sends.
+
+#### TRON network fees
+
+Each send gets a live quote. SSP Wallet shows the fee before you sign, and SSP Key shows it again before it co-signs. Typical amounts for a USDT transfer:
+
+| Send | Fee paid in TRX (default) | Fee paid in USDT (vault holds no TRX) |
+|------|---------------------------|---------------------------------------|
+| From a vault that has already sent once | ~6–7 TRX | ~3.5 USDT |
+| First send (also deploys the vault) | ~10 TRX | ~4.6 USDT |
+| Recipient has never held the token | + ~3.5 TRX | + ~1.2 USDT |
+
+- **Batch payments**: up to 16 recipients share one transaction and one fee, sized to the transaction's total cost, so each extra recipient costs much less than a separate send.
+- **Hard ceiling**: SSP Key refuses any sponsored fee above **30 TRX** or **8 USDT**, and any fee that isn't payable to SSP's fee address.
+- **Pay network fee myself (advanced)**: turn off sponsorship for a send and SSP Key submits it from its own TRON account instead (the app shows that account's address and balance). No fee goes to SSP; that account burns TRX for the energy — around 10 TRX for a USDT send, more for the first send, which also deploys the vault.
+- **Sending max**: when the fee is paid in the token you are sending, SSP subtracts it from the maximum automatically.
+
+#### Receiving on TRON
+
+- **USDT and other TRC-20 tokens** can be sent to the vault at any time, including before its first send.
+- **TRX** can be sent at any time too. The first TRX that reaches a brand-new address pays TRON's standard account-activation fee (about 1 TRX), charged to the **sender**; exchanges usually absorb it.
+- The vault is a smart-contract address. If you are withdrawing from an exchange to it for the first time, send a small test amount first.
+- TRON addresses look the same (`T…`) on mainnet and Nile, so an address alone never tells you which network it is on. Always check the selected chain before sending.
+
+> **TRON Nile** is a separate network with its own contracts and its own
+> TIP-712 chain ID, so a signature made for Nile can never be replayed on
+> mainnet, and vice versa.
+
 ### Testnets
 
 The following testnets are available:
@@ -234,6 +283,7 @@ The following testnets are available:
 - **Bitcoin Signet** - Controlled Bitcoin test network
 - **Flux Testnet** - Flux testing network
 - **Solana Devnet** - Solana testing network
+- **TRON Nile** - TRON testing network (TEST-TRX and test USDT)
 
 ## 🔧 Network-Specific Features
 
@@ -286,6 +336,35 @@ interface EVMTransaction {
 - **DeFi Protocols**: Uniswap, Aave, Compound integration
 - **Account Abstraction**: ERC-4337 compatible wallets
 
+### TRON Vault Operations
+
+#### Operation Structure
+```typescript
+// A TRON vault operation, signed by M of the vault's keys as TIP-712 typed data
+interface TronVaultOp {
+  calls: Array<{        // 1 to 16 transfers, executed together or not at all
+    to: string;         // recipient, or the TRC-20 token contract
+    value: string;      // TRX in sun (1 TRX = 1,000,000 sun)
+    data: string;       // TRC-20 transfer calldata, empty for TRX
+    tokenId: string;    // TRC-10 token ID (0 otherwise)
+    tokenValue: string; // TRC-10 amount (0 otherwise)
+  }>;
+  nonce: string;        // any unused number; nonces need not be in order
+  deadline: string;     // unix seconds; the operation is invalid afterwards
+  fee: {                // paid by the vault in the same transaction
+    token: string;      // TRX, or USDT when the vault holds no TRX
+    amount: string;     // 0 when you pay the network fee yourself
+    recipient: string;
+  };
+}
+```
+
+#### Vault Multisig Model
+- **Vault**: an immutable contract clone at a CREATE2 address that commits to the sorted signer addresses and the threshold
+- **Signing**: every key signs the same TIP-712 digest on its own; there is no signing order and no nonce exchange between devices
+- **Replay protection**: the digest binds the vault address and the TRON chain ID, and each nonce can be used once
+- **Submission**: SSP's sponsor submits it by default; any TRON account can submit it directly
+
 ## 🌍 Network Selection & Switching
 
 ### Network Selection
@@ -295,7 +374,7 @@ SSP Wallet does not infer the network from a recipient address or token contract
 - **User selection**: You pick the active chain in the wallet's chain selector; each chain has its own wallet and send view.
 - **dApp request**: A connected dApp can request a switch via WalletConnect's `wallet_switchEthereumChain`, which SSP maps to a matching configured EVM chain and surfaces for your approval.
 
-When you paste a recipient address, SSP validates it against the currently selected chain and warns you only if the address looks like it belongs to a different chain *type* (EVM / Solana / UTXO). Because all EVM chains share the same `0x` address format, SSP cannot detect which EVM network an address belongs to — always confirm you are on the intended network before sending, as transactions are irreversible.
+When you paste a recipient address, SSP validates it against the currently selected chain and warns you only if the address looks like it belongs to a different chain *type* (EVM / Solana / TRON / UTXO). Because all EVM chains share the same `0x` address format, SSP cannot detect which EVM network an address belongs to; likewise, TRON mainnet and Nile addresses look identical — always confirm you are on the intended network before sending, as transactions are irreversible.
 
 ### Manual Network Switching
 ```typescript
@@ -333,6 +412,7 @@ await sspProvider.request({
 | **BSC** | ~3 seconds | 30-90 seconds | ~45 seconds |
 | **Avalanche** | ~2 seconds | 10-30 seconds | Sub-second |
 | **Base** | ~2 seconds | 30-60 seconds | ~2 minutes |
+| **TRON** | ~3 seconds | ~1 minute (SSP waits until the block is irreversible, ~19 blocks) | ~1 minute |
 
 ### Fee Comparison (Typical)
 | Network | Transfer Fee | Token Transfer | Swap Fee | DeFi Interaction |
@@ -343,8 +423,9 @@ await sspProvider.request({
 | **BSC** | $0.10-2 | $0.20-3 | $0.50-5 | $1-20 |
 | **Avalanche** | $0.10-5 | $0.20-8 | $1-15 | $2-30 |
 | **Base** | $0.01-2 | $0.05-5 | $0.20-10 | $1-25 |
+| **TRON** | $1-2.50 (sponsored) | $2-3.50 (sponsored, USDT) | N/A | N/A |
 
-*Fees vary based on network congestion and transaction complexity*
+*Fees vary based on network congestion and transaction complexity. TRON fees are the sponsored-send fee paid by the vault; see [TRON network fees](#tron-network-fees).*
 
 ## 🔍 Block Explorers
 
@@ -358,12 +439,14 @@ await sspProvider.request({
 - **Flux**: [explorer.runonflux.io](https://explorer.runonflux.io)
 - **Solana**: [explorer.solana.com](https://explorer.solana.com)
 - **Kaspa**: [explorer.kaspa.org](https://explorer.kaspa.org)
+- **TRON**: [tronscan.org](https://tronscan.org)
 
 ### Testnet Explorers
 - **Bitcoin Testnet**: [mempool.space/testnet](https://mempool.space/testnet)
 - **Sepolia**: [sepolia.etherscan.io](https://sepolia.etherscan.io)
 - **Amoy**: [amoy.polygonscan.com](https://amoy.polygonscan.com)
 - **Solana Devnet**: [explorer.solana.com?cluster=devnet](https://explorer.solana.com?cluster=devnet)
+- **TRON Nile**: [nile.tronscan.org](https://nile.tronscan.org)
 
 ## 🛠️ Development & Testing
 
@@ -378,7 +461,6 @@ Development configurations are available in the SSP Wallet source code. Refer to
 ### Research Phase
 - **Cardano**: Multi-signature implementation research in progress
 - **Cosmos**: Inter-blockchain communication and multisig evaluation
-- **TRON**: TRC-20 and native multisig assessment
 - **NEAR**: Account model and multisig capabilities evaluation
 
 For detailed information, see [Networks Under Evaluation](networks-under-evaluation.md).
@@ -393,7 +475,8 @@ Submit requests for new network support on [GitHub](https://github.com/RunOnFlux
 2. **Ethereum**: DeFi, NFTs, complex smart contracts  
 3. **Polygon/BSC**: Frequent trading, gaming, low-value transfers
 4. **Avalanche/Base**: DeFi with better UX, moderate fees
-5. **Testnets**: Always test before mainnet transactions
+5. **TRON**: USDT (TRC-20) payments and batch payouts, with network fees sponsored by SSP
+6. **Testnets**: Always test before mainnet transactions
 
 ### For Developers
 1. **Test on testnets first** before mainnet deployment

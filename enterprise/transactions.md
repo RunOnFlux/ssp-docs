@@ -39,12 +39,12 @@ If your vault has multiple receive addresses with balances, select which **Sourc
 
 For UTXO chains (Bitcoin, Litecoin, etc.), this determines which UTXOs are spent. For EVM chains, this is the smart account that will execute the transfer.
 
-### Step 4 — (EVM only) Select token
+### Step 4 — (EVM and TRON) Select token
 
-If the vault is on an EVM chain (Ethereum, Polygon, BSC, Avalanche, Base), choose what to send:
+If the vault is on an EVM chain (Ethereum, Polygon, BSC, Avalanche, Base) or on TRON, choose what to send:
 
-* **Native token** (ETH, MATIC, BNB, AVAX, ETH on Base)
-* Any **ERC-20 token** the vault is watching
+* **Native token** (ETH, MATIC, BNB, AVAX, ETH on Base, TRX)
+* Any **ERC-20 token** (EVM) or **TRC-20 token** (TRON, for example USDT) the vault is watching
 
 The dropdown shows current balance for each option.
 
@@ -53,6 +53,8 @@ The dropdown shows current balance for each option.
 * **Auto Fee** (default) — the platform estimates the appropriate network fee. You'll see the estimate in native units and USD.
 * **Manual Fee** — toggle on to override. For UTXO chains, set sat/byte. For EVM, set gas price and gas limit.
 * **Max** — clicking the Max button sets the amount to the entire available balance, automatically subtracting the fee.
+
+On **TRON** there is no fee rate to set. The network fee is sponsored by SSP and paid by the vault in the same transaction — in TRX when the vault holds TRX, otherwise in USDT — and it is part of what the signers sign. See [TRON vaults](#tron-vaults).
 
 ### Step 6 — Designate signers (optional)
 
@@ -63,7 +65,7 @@ By default, all vault signers can approve the proposal. If you want only specifi
 
 This is useful when you know certain signers are unavailable, or when policy requires a specific subset (e.g., always include the CFO on payroll).
 
-On **EVM** vaults, the platform burns **two** signing nonces per designated signer at proposal creation — one from that signer's SSP Wallet and one from their SSP Key (single-device vaults burn one). EVM vaults require you to designate **exactly** the threshold number of signers (M of N), so you can't over-designate and waste nonces. On **UTXO** chains (Bitcoin, Litecoin, …) no signing nonces are consumed at proposal creation, and **Solana** uses a separate durable-nonce pool that is released if the proposal is rejected or expires. See [Why nonces matter](#why-nonces-matter) below.
+On **EVM** vaults, the platform burns **two** signing nonces per designated signer at proposal creation — one from that signer's SSP Wallet and one from their SSP Key (single-device vaults burn one). EVM vaults require you to designate **exactly** the threshold number of signers (M of N), so you can't over-designate and waste nonces. On **UTXO** chains (Bitcoin, Litecoin, …) no signing nonces are consumed at proposal creation, and **Solana** uses a separate durable-nonce pool that is released if the proposal is rejected or expires. **TRON** proposals have no designated signers at all: any M of the vault's N signers can sign, in any order, and nothing is consumed at creation. See [Why nonces matter](#why-nonces-matter) below.
 
 ### Step 7 — Review
 
@@ -75,7 +77,7 @@ Click **Review Proposal**. A confirmation modal shows:
 * Vault and chain
 * Designated signers
 
-Verify everything carefully. On **EVM** vaults, once you create the proposal **the nonces are committed** — even rejecting or expiring the proposal won't return them. (UTXO vaults burn no nonces at creation; Solana releases its durable nonce if the proposal is rejected or expires.)
+Verify everything carefully. On **EVM** vaults, once you create the proposal **the nonces are committed** — even rejecting or expiring the proposal won't return them. (UTXO and TRON vaults burn no nonces at creation; Solana releases its durable nonce if the proposal is rejected or expires.)
 
 ### Step 8 — Create and sign
 
@@ -157,6 +159,24 @@ Rejecting your own signature alone does not cancel the proposal — it just reco
 
 > **Note:** Rejecting or letting a proposal expire **does not** return the burned nonces. If the proposal needs to be re-attempted, the proposer creates a new one and burns fresh nonces.
 
+## TRON vaults
+
+TRON vaults follow the same propose → sign → broadcast flow, with a few differences:
+
+* **Any M of N, in any order.** There are no designated signers and no signing nonces. Each signer's SSP Wallet and SSP Key sign the same operation independently, and the proposal is ready as soon as any M signers have signed.
+* **Concurrent proposals.** You can have several TRON proposals open at once. Each carries its own one-time number on the vault, so they execute in whatever order they reach the threshold; one proposal never blocks another.
+* **What your devices check.** SSP Wallet and SSP Key each recompute the vault address from the signer set and threshold, confirm that their own key is one of the signers, rebuild the operation's digest themselves, and show you every transfer and the fee before signing. They never sign a hash they didn't compute.
+* **Sponsored broadcast.** Broadcasting submits the fully signed operation through SSP's sponsor, so nobody needs TRX for energy. The vault pays the signed fee (TRX by default, USDT if it holds no TRX) in the same transaction. The first executed proposal also deploys the vault contract.
+* **Batch payouts.** A proposal can pay up to 16 recipients in one transaction with a single fee; either all transfers happen or none do.
+* **Expiry.** The signed operation carries a deadline equal to the proposal's expiry. After the deadline it can never execute.
+* **Confirmation.** The status moves from **Broadcast** to **Confirmed** once the block is irreversible, about a minute later. The explorer link opens TronScan.
+
+### Cancelling a fully signed TRON proposal
+
+Once a TRON proposal has all the signatures it needs, the signed operation is valid on-chain until its deadline: whoever holds it can submit it to the vault directly, whether or not the proposal is still open in SSP Enterprise. So if a fully signed TRON proposal is cancelled, SSP Enterprise offers **Invalidate on-chain**. This is a small new operation that marks the original operation's one-time number as used on the vault, so the original can never execute. It needs the signing threshold again and pays a network fee like any other transaction. Until it confirms, or the original deadline passes, treat the cancelled proposal as still executable.
+
+A TRON proposal that never reached its threshold needs no on-chain step; it simply lapses at its deadline.
+
 ## Why nonces matter
 
 For EVM chains (Ethereum, Polygon, BSC, Avalanche, Base), every signature requires a fresh cryptographic nonce — a one-time random value. Each signer's SSP Wallet and SSP Key maintain a local pool of pre-generated nonces synced with the platform.
@@ -171,6 +191,8 @@ Practical implications:
 * **Nonce pools auto-replenish** — your wallet/key sync new nonces in the background; you'll rarely run out
 
 If a signer's nonce pool is empty (rare), they'll see a sync prompt before they can sign. Wait for the pool to refill.
+
+**TRON** vaults don't use signing nonces. Replay protection is built into the vault contract instead: every operation carries its own one-time number, which the vault marks as used when the operation executes (or when it is invalidated on-chain).
 
 ## Critical action signing — explained
 

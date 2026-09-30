@@ -1,6 +1,6 @@
 # Account Abstraction Implementation
 
-SSP Wallet implements ERC-4337 Account Abstraction with Schnorr signature multisignature support on EVM-compatible networks, providing advanced smart account capabilities while maintaining the security of the 2-of-2 multisignature architecture.
+SSP Wallet implements ERC-4337 Account Abstraction with Schnorr signature multisignature support on EVM-compatible networks, providing advanced smart account capabilities while maintaining the security of the 2-of-2 multisignature architecture. On TRON, which has no ERC-4337 infrastructure, SSP uses its own sponsored smart-contract vault instead (see [TRON Contract Vaults](#tron-contract-vaults)).
 
 ## Overview
 
@@ -75,7 +75,7 @@ class SchnorrMultisigValidator {
 
 ### 1. Gas Payment
 
-SSP Wallet does **not** enable paymaster sponsorship on EVM chains — every EVM UserOperation is paid from the smart account's **own native gas balance**, so the account must hold the chain's native token (ETH, MATIC, BNB, …). The `paymasterAndData` field is a standard ERC-4337 slot that SSP does **not** currently use, so the example below is illustrative only. Gasless / sponsored fees in the SSP stack exist **only on Solana**, where the SSP Relay paymaster signs the fee-payer slot.
+SSP Wallet does **not** enable paymaster sponsorship on EVM chains — every EVM UserOperation is paid from the smart account's **own native gas balance**, so the account must hold the chain's native token (ETH, MATIC, BNB, …). The `paymasterAndData` field is a standard ERC-4337 slot that SSP does **not** currently use, so the example below is illustrative only. Sponsored fees in the SSP stack exist only on **Solana**, where the SSP Relay paymaster signs the fee-payer slot, and on **TRON**, where SSP's sponsor contract covers the network resources and the vault pays a signed fee in the same transaction (see [TRON Contract Vaults](#tron-contract-vaults)).
 
 ```typescript
 // Example: Sponsored transaction
@@ -271,6 +271,37 @@ const aa = new SSPAccountAbstraction({
 });
 ```
 
+## TRON Contract Vaults
+
+TRON has no ERC-4337 EntryPoint and no bundlers, so SSP's TRON vault is not a port of the EVM smart account. It is a smaller, purpose-built contract that keeps the useful parts of Account Abstraction: an address that exists before the contract does, deployment on first use, batched calls, and someone else paying the network resources.
+
+| | EVM smart account (ERC-4337) | TRON vault |
+|---|---|---|
+| **Address** | CREATE2 from the factory, entry point and combined Schnorr key | CREATE2 from the factory and the sorted signer addresses plus the threshold |
+| **Signatures** | Schnorr multisig; the devices exchange public nonces | Independent secp256k1 ECDSA signatures over one TIP-712 digest; no nonce exchange, any order |
+| **Submission** | UserOperation → bundler → EntryPoint → account | Signed operation → SSP's sponsor contract → vault, or any TRON account → vault directly |
+| **Network fee** | Paid by the account in the chain's native gas token | Resources covered by SSP's sponsor; the vault pays a signed fee in the same transaction (TRX, or USDT if it holds no TRX) |
+| **Deployment** | With the first UserOperation | Inside the first send; anyone may deploy it |
+| **Batching** | `executeBatch` | Up to 16 calls per operation |
+| **Replay protection** | EntryPoint nonce | A one-time number per operation (any order); the digest binds the vault address and chain ID |
+
+The TRON vault has **no owner, no admin and no upgrade path**. Each vault is a minimal clone of one immutable implementation, and its only stored setting is the hash of its signers and threshold.
+
+### A sponsored TRON send
+
+1. SSP Wallet asks SSP Relay for a quote (fee, one-time number and deadline), builds the operation and signs its TIP-712 digest.
+2. SSP Key re-derives the vault from its own key, decodes and displays the operation, checks the fee and deadline, recomputes the digest, verifies the wallet's signature and co-signs.
+3. SSP Key sends both signatures to SSP Relay, which checks the transaction by simulating it and submits it through SSP's sponsor contract. The sponsor deploys the vault if needed and calls it; the vault verifies the signatures, makes the transfers and pays the fee.
+4. SSP Key reports the transaction ID back to SSP Wallet, which tracks it to confirmation.
+
+SSP Enterprise vaults work the same way with M of N signers, collected through proposals. See [Proposing & Signing Transactions](../enterprise/transactions.md#tron-vaults).
+
+### The sponsor has no power over your funds
+
+- The sponsor contract only pays network resources and forwards calls. It holds no funds and has no authority over any vault; every vault checks its own signatures.
+- The fee is part of what the keys sign, so nobody can change it after you approve, and SSP Key refuses fees above a fixed ceiling.
+- **Escape hatch**: the vault accepts a correctly signed operation from any caller, so you can always bypass the sponsor — from SSP Key's own TRON account (**Pay network fee myself**), with the open-source command-line tool, or through TronScan. See [Moving TRON Vault Funds Without SSP](../blockchains/tron-without-ssp.md).
+
 ## Supported Networks
 
 ### EVM Networks (Account Abstraction with ERC-4337)
@@ -284,13 +315,16 @@ const aa = new SSPAccountAbstraction({
 - **Sepolia**: Ethereum testnet (Chain ID: 11155111)
 - **Amoy**: Polygon testnet (Chain ID: 80002)
 
-**Note:** Account Abstraction is only available on EVM-compatible networks. UTXO networks (Bitcoin, Litecoin, Dogecoin, etc.) use native multisignature implementations and do not support Account Abstraction features.
+### TRON (SSP Contract Vault, Not ERC-4337)
+- **TRON Mainnet**: Sponsored contract vaults for TRX and TRC-20 tokens (TIP-712 chain ID: 728126428)
+- **TRON Nile**: TRON testnet (TIP-712 chain ID: 3448148188)
+
+**Note:** ERC-4337 Account Abstraction is only available on EVM-compatible networks. UTXO networks (Bitcoin, Litecoin, Dogecoin, etc.) use native multisignature implementations and do not support Account Abstraction features. TRON uses SSP's own contract vault described [above](#tron-contract-vaults).
 
 ### Under Evaluation
 The following networks are being evaluated for future support:
 - **Cardano**: Multi-signature implementation research in progress
 - **Cosmos**: Inter-blockchain communication and multisig evaluation
-- **TRON**: TRC-20 and native multisig assessment
 - **NEAR**: Account model and multisig capabilities evaluation
 
 ## Best Practices

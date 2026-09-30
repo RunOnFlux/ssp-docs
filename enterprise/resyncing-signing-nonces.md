@@ -17,7 +17,7 @@ For EVM vaults, SSP pre-generates a pool of single-use signing nonces on **both*
 * You see a **"Nonce Sync Required"** message, or a nonce error, when creating or signing a vault proposal.
 
 {% hint style="info" %}
-This only applies to **EVM vaults** (Ethereum and other EVM chains). **Bitcoin / UTXO** and **Solana** vaults don't use these nonces, so you never need to sync nonces for them.
+This only applies to **EVM vaults** (Ethereum and other EVM chains). **Bitcoin / UTXO**, **Solana** and **TRON** vaults don't use these nonces, so you never need to sync nonces for them.
 {% endhint %}
 
 ## Before you start

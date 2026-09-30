@@ -71,6 +71,7 @@
 ## 🔗 Blockchain Deep Dives
 
 * [Supported Blockchains Overview](blockchains/supported-blockchains.md)
+* [Moving TRON Vault Funds Without SSP](blockchains/tron-without-ssp.md)
 * [Networks Under Evaluation](blockchains/networks-under-evaluation.md)
 
 ## 🏢 SSP Enterprise

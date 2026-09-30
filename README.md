@@ -72,6 +72,7 @@ This design ensures that **both devices are required** to authorize any transact
 * Example derivation paths for popular chains:
   * **Bitcoin:** `m/48'/0'/0'/2'/0/0`
   * **Flux:** `m/48'/19167'/0'/0'/0/0`
+  * **TRON:** `m/48'/195'/account'/0'/…` (in SSP Wallet: `m/48'/195'/0'/0'/0/0`)
 * Extended functionality includes support for additional chains and constructing multiple external addresses per chain as needed.
 
 #### Synchronization Process
@@ -150,7 +151,7 @@ SSP Wallet supports **WalletConnect v2** (now **Reown**), enabling seamless inte
 
 ### Supported Blockchains
 
-SSP Wallet supports **13 mainnet blockchain networks** (plus testnets) with native multisignature security:
+SSP Wallet supports **15 mainnet blockchain networks** (plus testnets) with native multisignature security:
 
 #### UTXO Networks (Native Multisignature)
 
@@ -178,11 +179,16 @@ SSP Wallet supports **13 mainnet blockchain networks** (plus testnets) with nati
 
 * **Solana (SOL)** - SSP's own multisig program; funds live in a Program-Derived Address vault, with SPL token support
 
+#### TRON Network (Smart-Contract Vault)
+
+* **TRON (TRX)** - SSP's own immutable contract vault at a CREATE2 address computed from both keys; TRX and TRC-20 (including USDT), with network fees sponsored by SSP
+
 #### Testnet Networks
 
 * **Sepolia** - Ethereum testnet
 * **Amoy** - Polygon testnet
 * **Solana Devnet** - Solana testing network
+* **TRON Nile** - TRON testing network
 
 Each network maintains SSP's **2-of-2 multisignature security** while leveraging blockchain-specific optimizations and features.
 

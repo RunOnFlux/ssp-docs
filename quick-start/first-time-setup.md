@@ -269,7 +269,7 @@ Congratulations! Verify you've completed everything:
 - **[Security Best Practices](../security/security-overview.md)** - Comprehensive security guide
 
 ### Start Using SSP Wallet
-- **Add More Cryptocurrencies** - Bitcoin, Ethereum, and 13+ blockchains supported
+- **Add More Cryptocurrencies** - Bitcoin, Ethereum, and 15+ blockchains supported
 - **Connect to dApps** - Use WalletConnect for DeFi and NFT platforms
 - **Set Up Contacts** - Save frequently used addresses
 - **Explore Advanced Features** - Account abstraction, batch transactions

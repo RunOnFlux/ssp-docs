@@ -24,6 +24,28 @@ See [Supported Blockchains](supported-blockchains.md) for live integration detai
 
 ---
 
+### ⚡ TRON (TRX) — Supported
+**Status**: Supported on **mainnet** and the **Nile** testnet, for TRX and TRC-20 tokens including USDT. TRON has graduated from evaluation to a shipped integration. The vault factory, vault implementation and fee sponsor contract addresses are published at launch.
+
+TRON uses **SSP's own smart-contract vault**, not TRON's native account-permission multisig. Every vault is an immutable contract clone at a **CREATE2 address computed from the members' keys and the threshold** — the same trust property as a Bitcoin P2WSH address or SSP's Solana PDA.
+
+#### Why not TRON's native multisig
+TRON's built-in account permissions were evaluated and rejected:
+- A single **creator key** always exists, and creating the account and setting its permissions can never happen in one atomic step.
+- Each permission is capped at **5 keys**.
+- The permission-update transaction is exactly what TRON's most common multisig scam asks victims to sign.
+
+#### Delivered properties
+- **Trustless initialization**: No creator and no setup transaction — the address is a pure function of the member keys and the threshold, and it can receive TRX, TRC-10 and TRC-20 tokens before it exists on-chain.
+- **Front-running resistance**: Deployment is permissionless and only fixes code the address already committed to, so nobody can deploy a different owner set at your address.
+- **Immutable configuration**: No admin, no owner, no upgrade path. Members and threshold are fixed (to "rotate," migrate funds to a new vault).
+- **Sponsored fees**: SSP covers the network resources, and the vault pays a signed fee in the same transaction — TRX by default, USDT if the vault holds no TRX.
+- **Escape hatch**: Any TRON account can submit a fully signed operation directly to the vault, without SSP. See [Moving TRON Vault Funds Without SSP](tron-without-ssp.md).
+
+See [Supported Blockchains](supported-blockchains.md#tron-network) for live integration details.
+
+---
+
 The following networks are being researched and evaluated for future SSP Wallet support:
 
 ### 🔄 Cardano (ADA)
@@ -70,29 +92,6 @@ The following networks are being researched and evaluated for future SSP Wallet 
 - **Multi-Chain Support**: Single interface for multiple Cosmos chains
 - **Staking Integration**: Secure staking with multisig protection
 - **Governance Participation**: Vote on proposals with multisig security
-
----
-
-### ⚡ TRON (TRX)
-**Status**: TRC-20 and native multisig assessment
-
-#### Technical Considerations
-- **Account Model**: Similar to Ethereum with address-based accounts
-- **TRC-20 Tokens**: Standard token format similar to ERC-20
-- **Energy/Bandwidth**: Unique fee structure with staked resources
-- **Smart Contracts**: Solidity-compatible virtual machine
-
-#### Integration Challenges
-- **Resource Management**: Handling energy and bandwidth requirements
-- **Multisig Implementation**: Evaluating native vs smart contract approaches
-- **TRC-20 Support**: Token detection and management
-- **Network Stability**: Ensuring reliable network connectivity
-
-#### Potential Features
-- **TRC-20 Token Support**: Comprehensive TRON token ecosystem
-- **Resource Optimization**: Efficient energy and bandwidth usage
-- **DeFi Integration**: Access to TRON DeFi protocols like JustSwap
-- **Staking Rewards**: Participate in Super Representative voting
 
 ---
 
@@ -201,7 +200,6 @@ Developers and researchers interested in contributing to network evaluation:
 |---------|--------|-----------|----------|
 | **Cardano** | Research | Multi-signature native scripts | Under evaluation |
 | **Cosmos** | Research | IBC and multi-chain support | Under evaluation |
-| **TRON** | Research | TRC-20 and resource management | Under evaluation |  
 | **NEAR** | Research | Account model adaptation | Under evaluation |
 
 **Note**: Integration timelines depend on technical complexity, security requirements, community demand, and development resources. Networks that demonstrate strong multisignature capabilities and align with SSP's security principles will be prioritized for integration.

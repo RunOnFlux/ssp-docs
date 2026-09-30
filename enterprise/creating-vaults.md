@@ -46,13 +46,24 @@ Subtitle: *Choose the blockchain network for this vault.*
 
 You'll see a grid of supported chains:
 
-**Mainnet:** Bitcoin, Ethereum, Litecoin, Dogecoin, Flux, Bitcoin Cash, Zcash, Ravencoin, BNB Smart Chain, Avalanche, Polygon, Base, Solana.
+**Mainnet:** Bitcoin, Ethereum, Litecoin, Dogecoin, Flux, Bitcoin Cash, Zcash, Ravencoin, BNB Smart Chain, Avalanche, Polygon, Base, Solana, Kaspa, TRON.
 
-**Testnet:** Bitcoin Testnet, Bitcoin Signet, Sepolia (Ethereum testnet), Amoy (Polygon testnet), Flux Testnet, Solana Devnet — useful for trying things out without real funds.
+**Testnet:** Bitcoin Testnet, Bitcoin Signet, Sepolia (Ethereum testnet), Amoy (Polygon testnet), Flux Testnet, Solana Devnet, TRON Nile — useful for trying things out without real funds.
+
+Chains that your plan doesn't include are shown greyed out with an upgrade hint.
 
 Click a chain card to select it (it highlights in blue), then click **Next →**.
 
 > **Tip:** Test on a testnet vault first if this is your first time. Bitcoin Signet and Sepolia are free, fast, and behave identically to mainnet.
+
+### TRON vaults
+
+A TRON vault holds TRX and TRC-20 tokens such as USDT. It is SSP's own smart-contract vault, not TRON's native account-permission multisig:
+
+* **Address from the signers' keys.** The vault address is computed from all signers' keys and the threshold (a CREATE2 address). There is no creator, no admin key, and no upgrade path.
+* **Nothing is deployed at creation.** The address can receive TRX, TRC-10 and TRC-20 tokens straight away; the vault contract is deployed automatically inside its first executed proposal.
+* **Signer limit: 40 keys.** That is up to 20 members with **Dual Signing** (2 keys each) or up to 40 with **Key Only** or **Wallet Only** signing. Your plan may set a lower limit.
+* **Network fees are sponsored.** You don't need TRX for energy; each transaction pays a small fee from the vault instead (see [Proposing & Signing Transactions](transactions.md#tron-vaults)).
 
 ## Step 3 — Name the vault
 
@@ -141,6 +152,8 @@ The platform now coordinates with each designated signer to collect their **exte
 You'll see the vault status as **Pending Setup** during this process. Once all signers have contributed their xpub, the status changes to **Active** and the first vault address is displayed.
 
 > **What this means cryptographically:** the vault address is a function of all signers' xpubs. No single signer (or even the platform) can derive the address alone. This is true self-custody — even if SSP Enterprise went offline tomorrow, your signers could recover the vault using their seed phrases and the public derivation paths.
+
+For **TRON** vaults, each signer's key is derived at `m/48'/195'/<org index>'/0'/<vault index>/<address index>`, and the vault address is the CREATE2 address of the sorted signer addresses and the threshold. On TRON, the signers can also move funds without SSP Enterprise at all: see [Moving TRON Vault Funds Without SSP](../blockchains/tron-without-ssp.md).
 
 ## Receiving funds
 

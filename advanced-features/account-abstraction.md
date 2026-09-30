@@ -9,6 +9,7 @@ Account Abstraction applies to EVM chains only. Other chain families use their o
 - **EVM** (Ethereum, Polygon, BSC, Base, Avalanche, …): ERC-4337 smart accounts, Schnorr 2-of-2.
 - **UTXO** (Bitcoin, Litecoin, Dogecoin, …): native P2SH / P2WSH 2-of-2 multisig.
 - **Solana**: PDA vault multisig (the SSP Relay paymaster signs the fee-payer slot).
+- **TRON**: SSP's own smart-contract vault at a CREATE2 address computed from both keys and the threshold. It is not ERC-4337 (TRON has no bundlers): SSP's sponsor covers the network resources, and the vault pays a small signed fee in the same transaction, in TRX or, if it holds no TRX, in USDT.
 
 In all cases the security model is the same strict **2-of-2**: both keys are required for every transaction. Account Abstraction changes *how* an EVM address is constructed and how transactions are submitted — it does not add a third key or weaken the multisig.
 
@@ -95,6 +96,15 @@ const sigData = abiCoder.encode(
 - **First send deploys the account.** Like all ERC-4337 accounts, the smart account is deployed on-chain with its first UserOperation; SSP handles this for you.
 - **Recovery is by seed phrase only.** There is no social recovery, guardians, or third key. Back up **both** seed phrases separately. See [Lost or Replaced a Device?](../troubleshooting/lost-or-replaced-device.md).
 
+## Sponsored fees on TRON
+
+TRON vaults borrow the same ideas (an address that exists before its contract, deployment with the first send, batching) without ERC-4337:
+
+- **You don't need TRX for energy.** SSP's sponsor pays TRON's energy and bandwidth. Your vault pays a small fee in the same transaction, and both keys sign that fee as part of the transaction: TRX by default, USDT if the vault holds no TRX. Keeping some TRX in the vault makes fees cheaper.
+- **First send deploys the vault.** The vault receives TRX and tokens before it exists on-chain, and it is deployed inside your first send.
+- **One fee per transaction.** A single send can pay up to 16 recipients.
+- **The sponsor is optional.** It holds no funds and has no authority over your vault. You can pay the network fee yourself, or submit a signed operation from any TRON account: see [Moving TRON Vault Funds Without SSP](../blockchains/tron-without-ssp.md).
+
 ## Additional resources
 
 - **[Account Abstraction Implementation](../architecture/account-abstraction.md)** — deeper technical reference
@@ -102,6 +112,7 @@ const sigData = abiCoder.encode(
 - **[ERC-4337 Standard](https://eips.ethereum.org/EIPS/eip-4337)** — Account Abstraction specification
 - **[SSP AA SDK](https://github.com/RunOnFlux/aa-schnorr-multisig-sdk)** — Schnorr multisig integration
 - **[Account Abstraction Repository](https://github.com/RunOnFlux/account-abstraction)** — SSP's AA implementation
+- **[TRON Multisig Repository](https://github.com/RunOnFlux/tron-multisig)** — SSP's TRON vault contracts and SDK
 
 ---
 
