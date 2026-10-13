@@ -102,7 +102,7 @@ If the SSP apps aren't available, you can create a signed operation with the SDK
 Where the keys are:
 
 * **SSP Wallet vault (2-of-2)**: each device's key is at `m/48'/195'/0'/0'/0/<address index>` of **its own** seed phrase: the SSP Wallet seed phrase for one key, the SSP Key seed phrase for the other. Your first TRON address is address index `0`.
-* **SSP Enterprise vault**: each signer's keys are at `m/48'/195'/<org index>'/0'/<vault index>/<address index>`. You need as many keys as the vault's threshold; in Dual Signing mode that means both the SSP Wallet and the SSP Key seed phrases of each signing member. Build the configuration from all signers' addresses with `buildConfig(signerAddresses, threshold)` instead of `buildConsumerConfig`.
+* **SSP Enterprise vault**: each signer's keys are at `m/48'/195'/<org index>'/0'/<vault index>/<address index>`. You need as many keys as the vault's on-chain threshold. In Dual Signing mode that threshold is twice the vault's signer threshold (2M), and any of the members' SSP Wallet or SSP Key keys count toward it, for example both seed phrases of M members. Build the configuration from all signers' addresses with `buildConfig(signerAddresses, threshold)` instead of `buildConsumerConfig`.
 
 Install the SDK and two standard BIP-39/BIP-32 libraries (Node.js 20.19 or later) while online, then disconnect:
 

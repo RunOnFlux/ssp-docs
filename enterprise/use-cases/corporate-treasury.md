@@ -140,7 +140,7 @@ Limit blast radius via small balances and tight per-tx caps rather than time-loc
 ### SOC 2 / ISO 27001
 
 * SSP Enterprise's audit log provides the immutable, attributable record auditors require for "segregation of duties" controls
-* Two-device per signer satisfies "two-factor authentication" requirements
+* Dual Signing gives each signer two keys on two separate devices, and no single device can sign. The vault accepts any 2M of the members' 2N keys rather than enforcing both devices per signer, so check this against your "two-factor authentication" control wording (see [what Dual Signing guarantees](../creating-vaults.md#what-dual-signing-guarantees))
 * Open-source codebase is verifiable, satisfying "third-party security review" requirements
 
 ### SOX-style internal controls

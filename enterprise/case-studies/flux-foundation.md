@@ -18,7 +18,7 @@ How the Flux Foundation moved from scattered multisig and custom scripts to a si
 | **Industry** | Decentralized infrastructure |
 | **Use case** | Foundation treasury + Fusion bridge multisig |
 | **Chains** | BTC, ETH, FLUX, EVM L2s |
-| **Vault model** | M-of-N multisig, two-device per signer |
+| **Vault model** | M-of-N multisig, Dual Signing (two keys per signer) |
 | **Status** | In production |
 
 ## Before: scattered multisig and custom scripts
@@ -47,7 +47,7 @@ SSP Enterprise was the only platform that addressed all three at once: native mu
 One platform, every chain the Foundation interacts with, one consistent signing model. The custom scripts are retired. The chat-thread audit trail is replaced by attributable on-platform records. Treasury and bridge multisig live side by side under the same governance.
 
 * **M-of-N vaults across every chain.** Bitcoin, Ethereum, Flux, and the EVM L2s — same platform, same mental model, same security guarantees.
-* **Two devices per signer (default Dual mode).** With Dual Signing, the browser extension and mobile app are both required for every signature, so a single compromised device cannot sign. (Optional Key Only / Wallet Only vault modes use one device per signer — see [Creating Multisig Vaults](../creating-vaults.md).)
+* **Two keys per signer (default Dual mode).** With Dual Signing, each signer holds one key in the browser extension and one in the mobile app, and an M-of-N vault needs 2M of the 2N keys, so a single compromised device cannot sign. Any 2M keys count, not only complete wallet + phone pairs, so the threshold matters — see [what Dual Signing guarantees](../creating-vaults.md#what-dual-signing-guarantees). (Optional Key Only / Wallet Only vault modes use one device per signer.)
 * **Audit trail that holds up.** Every proposal, approval, and rejection logged with the signer and timestamp. Replaces the chat-thread reconstruction.
 * **Self-custody, end to end.** No vendor key share. No MPC infrastructure to trust. If SSP went away tomorrow, funds remain recoverable from signer seeds.
 
@@ -56,7 +56,7 @@ One platform, every chain the Foundation interacts with, one consistent signing 
 The Fusion bridge is one of the most security-sensitive surfaces the Foundation operates — it coordinates value transfer between Flux and other chains, and a single signing failure could be catastrophic. It's also the workload where SSP Enterprise's model pays off most clearly.
 
 * **On-chain multisig.** Native multisig on every chain the bridge touches — no smart-contract custodian, no relayer that can stall or front-run.
-* **Two-device signing per signer.** Compromising one signer's laptop or phone is not enough to push a bridge transaction. Both devices, every time.
+* **Two keys per signer.** A Dual Signing vault needs twice its signer threshold in device keys, so compromising one signer's laptop or phone is never enough to push a bridge transaction.
 * **Per-signer policy controls.** Limits and whitelists configured at the org and vault level, enforced before any signature is collected.
 * **Auditable end to end.** Every approval and rejection attributed and timestamped. Community accountability without giving up self-custody.
 

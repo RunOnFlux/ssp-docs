@@ -84,11 +84,27 @@ Only members who have logged in to SSP Enterprise at least once (so their SSP Wa
 
 Depending on your plan and the chain, you may see a signing mode selector:
 
-* **Dual Signing** — each signer uses both their SSP Wallet and SSP Key (2 keys per signer). The default and most secure option.
-* **Key Only Signing** — each signer uses only their SSP Key (1 key per signer). Allows more signers per vault.
-* **Wallet Only Signing** — each signer uses only their SSP Wallet (1 key per signer). Allows more signers per vault.
+* **Dual Signing** — each signer contributes two keys, one from their SSP Wallet and one from their SSP Key (2 keys per signer). The default. Read [what Dual Signing guarantees](#what-dual-signing-guarantees) before choosing the threshold.
+* **Key Only Signing** — each signer uses only their SSP Key (1 key per signer). Allows more signers per vault, and the browser extension holds no key of the vault.
+* **Wallet Only Signing** — each signer uses only their SSP Wallet (1 key per signer). Allows more signers per vault. The browser extension is the only signing device, so it is not recommended for high-value vaults.
 
 Each mode shows the maximum number of signers allowed.
+
+#### What Dual Signing guarantees
+
+A Dual Signing vault with a threshold of M out of N signers is, on-chain, a **2M-of-2N multisig over all the members' device keys**. Any 2M of the 2N keys can sign, whichever device each key is on (SSP Wallet or SSP Key) and whichever member holds it. The vault does not check that each approving member signed with both devices. This is the same on every supported chain, and the signing mode can't be changed once the vault exists.
+
+In the normal flow every approving member signs with both devices, so M members approve. The chain also accepts other combinations:
+
+* **One device is never enough.** Every Dual vault needs at least 2 keys, so a single compromised laptop or phone cannot sign.
+* **Members' wallets can co-sign without any phone.** In a 1-of-2 Dual vault (2-of-4 keys), the two members' SSP Wallets can sign together without either SSP Key. In a 2-of-4 Dual vault (4-of-8 keys), the four members' SSP Wallets alone are enough.
+* **Mixed sets count too.** In a 2-of-3 Dual vault (4-of-6 keys), all three SSP Wallets plus one member's SSP Key can sign.
+* **When M is half of N or less**, the members' SSP Wallets alone hold enough keys (N ≥ 2M), and so do their SSP Keys alone. A compromised SSP Wallet build on the members' computers, or a compromised SSP Key build on their phones, could then move funds from the vault without the other device.
+
+For high-value vaults:
+
+* **Choose a threshold above half the signers** (for example 2-of-3, 3-of-5 or 4-of-6). Then neither all the members' SSP Wallets together nor all their SSP Keys together reach 2M keys, so every spend needs keys from both kinds of device.
+* **Or use Key Only Signing** with a majority threshold. The browser extension then holds no key of the vault. Each member signs with one device, so that member's phone is their whole signature.
 
 ### Selecting signers
 
@@ -130,7 +146,7 @@ The review screen shows:
 
 * **Chain:** logo, name, symbol
 * **Name:** what you entered
-* **Multisig:** e.g., `2-of-3 signers (4-of-6 keys with Dual Signing)`
+* **Multisig:** e.g., `2-of-3 signers (4-of-6 keys with Dual Signing)`. With Dual Signing, any 4 of the 6 keys can sign; see [what Dual Signing guarantees](#what-dual-signing-guarantees).
 * **Signing Mode:** if not Dual
 * **Signers:** bulleted list with name, identity, and role
 

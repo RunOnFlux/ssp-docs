@@ -9,7 +9,7 @@ This guide is for teams currently using Safe (formerly Gnosis Safe) who want to 
 ## Why teams move from Safe
 
 * **Multi-chain native** — Safe is EVM-only. SSP Enterprise covers Bitcoin, Litecoin, Dogecoin, Bitcoin Cash, Zcash, Ravencoin, Flux, plus the major EVM chains (Ethereum, Polygon, BNB Chain, Avalanche, Base). Treasuries holding both BTC and ETH no longer need two platforms.
-* **Stronger per-signer security** — Safe relies on whatever wallet each signer happens to use (MetaMask, Ledger, etc.). SSP Enterprise enforces **two-device security per signer** (browser extension + mobile app), so compromising one device of one signer is not enough to sign.
+* **Stronger per-signer security** — Safe relies on whatever wallet each signer happens to use (MetaMask, Ledger, etc.). In SSP Enterprise's default Dual Signing mode each signer holds **two keys on two devices** (browser extension + mobile app) and a vault needs twice its signer threshold in keys, so compromising one device is never enough to sign. The vault accepts any combination of members' keys, so pick the threshold accordingly — see [what Dual Signing guarantees](../creating-vaults.md#what-dual-signing-guarantees).
 * **Built-in policy engine** — Safe needs Modules/Guards configured per-vault, often with custom Solidity. SSP Enterprise has spending limits, whitelists, time-locks, admin approvals, per-signer overrides — all configured through the UI, no smart contract deployment.
 * **Simpler member management** — Safe stores signers as Ethereum addresses; you have to track who each address belongs to manually. SSP Enterprise has named members, roles, audit logs — true team management.
 * **Native broadcasting on UTXO chains** — For Bitcoin, Litecoin, Dogecoin and the other UTXO chains, SSP Enterprise broadcasts signed transactions directly to full nodes. (Note: on EVM chains, SSP Enterprise vaults are ERC-4337 smart accounts, so EVM transactions are UserOperations relayed through an ERC-4337 bundler — the same class of infrastructure dependency Safe has on EVM, not a differentiator.)
@@ -20,7 +20,7 @@ This guide is for teams currently using Safe (formerly Gnosis Safe) who want to 
 |---|---|---|
 | **Custody model** | Self-custody multisig (smart contract) | Self-custody multisig (native + smart contract) |
 | **Chain coverage** | EVM only (~10 chains) | EVM + UTXO + Solana + TRON (15+ chains) |
-| **Signer security** | Whatever wallet each signer uses | Two-device per signer (enforced) |
+| **Signer security** | Whatever wallet each signer uses | Two keys per signer on two devices (Dual Signing: any 2M of the 2N keys) |
 | **Policies** | Modules/Guards (Solidity) | Built-in policy engine (UI configured) |
 | **Member management** | Ethereum addresses | Named members + roles |
 | **Transaction history** | On-chain + Safe Transaction Service | On-chain + SSP indexer |

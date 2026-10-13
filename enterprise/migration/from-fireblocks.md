@@ -22,14 +22,14 @@ We hear four reasons, in roughly this order:
 | Aspect | Fireblocks | SSP Enterprise |
 |---|---|---|
 | Custody | MPC, vendor holds part of every key | Self-custody, your team holds all keys |
-| Signing UX | Mobile approval, often 1-of-1 | M-of-N multisig, two devices per signer |
+| Signing UX | Mobile approval, often 1-of-1 | M-of-N multisig, two keys per signer (Dual Signing) |
 | Addresses | Provided by vendor | Derived from your signers' xpubs |
 | Transaction history | Lives in Fireblocks dashboard | Lives on-chain, indexed by SSP |
 | Policies | Transaction Authorization Policy (TAP) | SSP policy engine (UI-configured) |
 | Compliance integrations | Built-in (Chainalysis, Elliptic) | Bring your own / API-driven |
 | Recovery | Vendor-assisted | Signer seed phrases |
 
-The two big mental shifts: (1) signing requires two devices per signer, not one, and (2) recovery is your problem now, with the upside that nothing can prevent it.
+The two big mental shifts: (1) in the default Dual Signing mode each signer approves with two devices (browser extension and phone), not one, and (2) recovery is your problem now, with the upside that nothing can prevent it. Dual Signing vaults accept any 2M of the members' 2N keys, so read [what Dual Signing guarantees](../creating-vaults.md#what-dual-signing-guarantees) before choosing thresholds.
 
 ## Before you start
 

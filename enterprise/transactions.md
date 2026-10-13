@@ -163,7 +163,7 @@ Rejecting your own signature alone does not cancel the proposal — it just reco
 
 TRON vaults follow the same propose → sign → broadcast flow, with a few differences:
 
-* **Any M of N, in any order.** There are no designated signers and no signing nonces. Each signer's SSP Wallet and SSP Key sign the same operation independently, and the proposal is ready as soon as any M signers have signed.
+* **Any M of N, in any order.** There are no designated signers and no signing nonces. Each signer's SSP Wallet and SSP Key sign the same operation independently, and the proposal is ready as soon as the vault's key threshold is met: M keys in Key Only or Wallet Only mode, 2M keys in Dual Signing mode (normally M signers with both devices, but any 2M of the members' keys count — see [what Dual Signing guarantees](creating-vaults.md#what-dual-signing-guarantees)).
 * **Concurrent proposals.** You can have several TRON proposals open at once. Each carries its own one-time number on the vault, so they execute in whatever order they reach the threshold; one proposal never blocks another.
 * **What your devices check.** SSP Wallet and SSP Key each recompute the vault address from the signer set and threshold, confirm that their own key is one of the signers, rebuild the operation's digest themselves, and show you every transfer and the fee before signing. They never sign a hash they didn't compute.
 * **Sponsored broadcast.** Broadcasting submits the fully signed operation through SSP's sponsor, so nobody needs TRX for energy. The vault pays the signed fee (TRX by default, USDT if it holds no TRX) in the same transaction. The first executed proposal also deploys the vault contract.
